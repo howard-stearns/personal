@@ -1,0 +1,129 @@
+<HTML>
+<HEAD>
+<TITLE>Lisp/C Integration in Eclipse: Past And Future</TITLE>
+<meta name="description" content="Lisp/C integration conclusion">
+<meta name="keywords" content="lisp, c, assembly, integrate, mop, walk, compile, java>
+<meta name="date" content="9/1/97">
+<meta name="author" content="Howard Stearns">
+<meta name="copyright" content="Elwood Corp.">
+</HEAD>
+
+<BODY bgcolor="#FFFFFF">
+
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="calling-c.html">[Previous]</A> 
+<A HREF="references.html">[Next]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+<HR>
+
+<a name="past-and-future"><h2>5: Past And Future</h2></a>
+
+<a name="related-work"><h3>5.1: Related Work</h3></a>
+
+Eclipse is not the first ``Lisp in C'' implementation. Kyoto Common
+Lisp (KCL) was written by Taiichi Yuasa and Masami Hagiya at Kyoto
+University in 1984[<a href="references.html#Yuasa">Yuasa</a>]. Bill
+Schelter at the University of Texas updated this in the early 1990s as
+Austin Kyoto Common Lisp (AKCL). The current version is available from
+the Free Software Foundation as GNU Common Lisp (GCL).[<a
+href="references.html#Schelter">Schelter</a>] These are all based on
+CLtL1[<a href="references.html#Steele">Steele</a>]; essentially a
+subset of ANSI Common Lisp that predates the Common Lisp Object System
+(CLOS), though PCL and other extensions are available. These systems
+generate C code that is then compiled with a C compiler to produce
+machine code. C is used as a ``portable assembly language'' and the
+appearance of the generated code reflects this. Giuseppe Attardi has
+extended this implementation family with ECoLisp (ECL), which features
+function calling that uses the C stack and more standard function
+calling conventions.[<a href="references.html#Attardi">Attardi</a>]
+
+<p>
+The idea of using standard operating system delivery mechanisms is
+represented by such systems as Wade Common Lisp (WCL), produced by
+Wade Hennessey at Standford University in 1992. This capitalized on
+Sun's shared-object library technology to create small-executable Lisp
+applications.[<a href="references.html#Hennessey">Hennessey</a>]
+Conscious Computing has produced LinkLisp, which features a
+specialized Lisp compiler implemented as a Windows DLL and VBX.
+
+<p>
+Meanwhile, Bruno Haible of Karlsruhe University and Michael Stoll of
+Munich University produced CLISP. This is a widely used extended CLtL1
+Lisp that uses portable C to implement a Lisp byte-code engine.[<a
+href="references.html#Haible">Haible</a>]
+
+<p>
+The leading commercial Lisp-to-C translator through the 1980s was the
+Chestnut system. This $12,000 system translated complete applications
+into C from within other commercial Lisp systems. The result was
+linked with a library to run. The rights to this system have been sold
+to a major database and business software vendor that uses it
+internally but does not make the system available to others. Wolfgang
+Goerigk, Ulrich Hoffmann, and Heinz Knutzen of the University of Kiel
+are now working on CLiCC, which translates a carefully defined static
+subset of Common Lisp.[<a
+href="references.html#Hoffmann">Hoffmann</a>] CLiCC retains the
+``separate Lisp data stack'' architecture used in the classical ``C as
+assembly language'' designs.
+
+<p>
+A number of similar systems exist for Scheme and other Lisp dialects,
+notably Scheme->C, Stalin, and ILOG Talk.
+
+<p>
+Eclipse is not directly based on any of these, but instead synthesizes
+the major concepts of all. The principal advance is in the tight,
+idiomatic integration of Lisp and C. The appearance of Lisp calls is
+as ordinary C, the appearance of C calls is as ordinary Lisp, and Lisp
+data is handled as ordinary C data. Eclipse is probably also the first
+Lisp implementation designed from the start to conform to the ANSI
+Common Lisp standard, and includes a native implementation of CLOS and
+the CLOS-MOP.
+
+<a name="planned-work"><h3>5.2: Planned Work</h3></a>
+
+Eclipse has been available commercially since September 26, 1997, and
+is stable and complete.
+
+<p>
+The development strategy has followed the dictum ``first make it right,
+then optimize.'' It is now time to optimize, and this is the bulk of
+the current development activity. Preliminary results show that we
+will be able to expect C-like performance for C-like Lisp code
+compiled to C by <code>COMPILE-FILE</code>, and more generally, speed comparable to
+other commercial Lisp systems for compiled-to-C applications.
+
+<p>
+The Eclipse compiler and interpreter are actually a generalized code
+walker that follows an ``Open Implementation'' or MOP-based
+protocol. This allows the walker to be specialized for different
+processing requirements. Walking with respect to an interpreter
+environment returns results directly, while walking with respect to a
+C-compiler environment returns pseudo-code that is pretty-printed to
+produce C source files. We expect that this technique, combined with
+Eclipse's MOP implementation, can be used to generate other compiled
+formats, including other source languages such as C++, or various
+forms of byte code such as Java Virtual Machine code. By extending the
+technique of special compilation for particular kinds of functions, we
+expect to be able to produce specialized code for statically
+determined methods, including idiomatic compilation of target language
+(i.e., Java) metaobjects. Because the Eclipse library was written in
+Lisp and self-compiled to C, rather than being written directly in C,
+new libraries can be generated for these new formats.
+
+<p>
+By tightly integrating Lisp and C, we also plan to capitalize on such
+current advances as dynamic loading of machine code and native
+threads. Eclipse already uses parts of PPCR, which makes these
+portably available to C programmers.[<a
+href="references.html#Demers">Demers</a>]
+
+<hr>
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="conclusion.html">[Previous]</A> 
+<A HREF="references.html">[Next]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+</BODY>
+</HTML>

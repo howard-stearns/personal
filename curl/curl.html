@@ -1,0 +1,624 @@
+<HTML>
+<HEAD>
+<TITLE>Curl&#8482; Technology for the Web</TITLE>
+</HEAD>
+<BODY>
+<blockquote><i>
+<a href="http://curl.com">Curl&#8482;</a> is the original unified RIA
+architecture. Starting in an MIT laboratory, by the year 2000 it
+embodied such HTML5+CSS+Javascript+WebGL features as style sheets, 2D
+and 3D graphics, drag and drop GUI, a Document Object Model, offline
+storage, secure file access, and inter-app/inter-doc networking. In
+2002, the following overview appeared in Dr. Dobb's Journal's
+Lightweight Languages Workshop CD-ROM. The original article included
+interactive examples using a plugin provided on the CD, which are
+presented here as static images.
+</i></blockquote>
+
+<H1>Curl&#8482; Technology for the Web</H1>
+<H4>by <A href="mailto:howard@curl.com">Howard Stearns</A>, Curl Corporation</H4>
+
+<!-- <BLOCKQUOTE> --
+<FONT color="green">
+Curl's eyes only-<BR>
+<I>A magazine article introducing Curl technology to developers,
+suitable for such publications as "Dr. Dobbs Journal."
+<P>
+It is based on the premise that simply describing the features of the
+Curl language invites unwanted comparison with other languages, and
+allows people to think of us as "Yet Another Language."
+<P>
+Instead, a survey of the "gentle slope" is presented, based on the
+"Curl in 10 Minutes" overview for developers.  Unlike the 10 minute
+overview, this article explains more about the implications for
+developers, end users and site owners.  The
+traditional language-feature tour is relegated to a side-bar.</B>
+</I></FONT>
+-- </BLOCKQUOTE> -->
+
+<BLOCKQUOTE>
+<b>
+<CENTER><A name="abstract"/>Abstract</CENTER>
+The combination of Curl&#8482; technologies -- language, libraries, and
+   implementation -- is designed for the practical distribution of
+   full-featured applications over the Web.  These execute with the
+   interactive feel of a native application rather than a static Web page.
+   This article provides an introductory overview of the these
+   technologies. It uses source code and graphics to illustrate the
+   progression from: 
+<UL>
+   <LI>static content with client-side formatting, 
+   <LI>through more interactive "live" pages and generative graphics,
+   <LI>to more complex object-oriented applications.
+</UL>
+
+   The integration of these in a unified framework makes for richer
+   applications that are easier to deploy and cheaper to operate
+   relative to more specialized technologies.
+
+   A side-bar uses code fragments to illustrates features of the
+language
+   itself. 
+</b>
+</BLOCKQUOTE>
+
+
+<!-- INTRO --> 
+
+<P>
+No single programming technique is ideal for every kind of problem.
+There are lots of specialized technologies designed for specific
+aspects of a Web application, yet trying to combine them creates
+problems and bloat. 
+It is difficult to deploy a highly interactive Web site that juggles
+static HTML, Javascript procedures, Java objects, perl scripts,
+plug-ins, and a plethora of ever-changing Microsoft products. This is
+quick-sand -- unstable bedrock.  It is hard to make the technologies
+work together and interact properly with each other.  It is hard to
+control the client set-up for any one of these, much less in
+combination.  If the fragile result works, it is huge.  Typically, the
+simplest gesture by the user causes a request to the server to
+generate another mass of code to be
+downloaded.  The client's screen flickers, pauses, and far too often,
+crashes.
+
+<P>
+Curl&#8482; technology solves these problems -- by allowing
+developers to create Web documents
+with almost any sort of content, from simple formatted text to complex
+interactive applets.  Curl provides a rich set of formatting
+operations similar to those of HTML as well as scripting and
+robust object-oriented programming capabilities.  Each
+capability allows a compact program to be executed on
+the client, reducing interaction times and server load.
+By unifiying these with a consistent
+semantic model, communications obstacles between separately
+enapsulated fragments of content can be avoided.
+
+<P>
+The value of the
+technology is greater than the sum of its parts.  The
+total download size and cost of ownership is less than with other
+individual technologies, because there is less glue code and
+translation, and fewer <I>kinds</I> of code.  This allows a higher
+ratio of information content to infrastructure.
+
+<P>The Curl&#8482; technology infrastructure has this foundation:
+<UL>
+
+ <P>
+ <LI><B>language</B> - By itself, the Curl&#8482; Content Language is
+ a modern, multi-paradigm programming language.
+ All the capabilities of the libraries and deployment mechanism are
+ controlled and integrated through this single language.  
+ Within this language,
+ developers can choose among declarative, procedural,
+ function-oriented, object-oriented, and scripting paradigms based on
+ the specific application.  Data
+ can be shared between different aspects of an application (e.g., without
+ "quoting hell").  Basic abstraction concepts such as procedure and
+ class definition can be brought to bear on all.  The <A
+ href="language.html">Language Sidebar</A> illustrates some of the
+ individual features.
+
+ <P>
+ <LI><B>libraries</B> - The language is supplemented with libraries
+ for text formatting, graphics and layout operations, and general
+ object-oriented programming.  
+
+ <P>
+ <LI><B>delivery</B> - This article illustrates the deployment of 
+ Curl&#8482; technology as a simple page of content (e.g., a
+ <CODE>.curl</CODE> file) sent from an <CODE>HTTP</CODE> server and
+ displayed using the Surge&#8482; plug-in.  Curl&#8482; content
+ language programs can also be deployed as scripts.
+
+</UL>
+
+<P>
+Given this integrated framework, incrementally improving an application's
+functionality requires only incremental skill aquisition and
+incremental, localized code changes.  For example, you can start with
+a page of text to be displayed, add formatting, interaction,
+graphics and other computation, and so forth -- without changing
+languages or execution environments.  The next four sections
+give examples of this progression, illustrating the breadth of the
+Curl content language, libraries, and deployment engine.  A fifth
+section gives an overview of how the framework supports reliable
+deployment and execution.
+</UL>
+
+<!-- BODY -->
+
+<HR>
+<H2><A name="text">Ordinary Text Is Literal Data</A></H2>
+
+A <CODE>.curl</CODE> file can contain ordinary text, and
+a plug-in displaying that content formats it.
+
+<P>
+<TABLE border="1">
+<TR><TD><IMG src="images/start-1.jpg"></TD><TD><I>The screen shot to
+the left shows how the black text of the source code below is
+displayed in a browser using the Surge&#8482; plug-in.</I></TD></TR>
+<TR><TD colspan="2"><PRE>
+    This is                     
+    some                   text.
+
+    Here is a                            <FONT color="green">|| This comment</FONT>
+       different paragraph               <FONT color="green">|| is not displayed</FONT>
+
+    You can include Unicode characters like: \u03a7\u0391\u03a9\u03a3
+    \u05de\u05d5\u05dc\u05e9 
+</PRE></TD></TR>
+</TABLE>
+<P>
+The plug-in treats a blank line as a paragraph separator.  It
+collapses whitespace within a paragraph, and formats the paragraph to
+fit the screen.
+
+<HR>
+<H2><A name="markup">Text Formatting</A></H2>
+
+In a Curl&#8482; content language source file, any text surrounded by curly
+braces is processed specially:
+<P>
+<TABLE border="1">
+<TR><TD><IMG  src="images/markup-1.jpg"></TD></TD>
+<TD><I>The braces in the code below surround tagged text similarly to
+HTML.  It produces the result shown in the screen shot to the left.<P>
+The formatting tags are actually operators from a library that produce
+data that the plug-in displays specially.
+</I></TD></TR>
+<TR><TD colspan="2"><PRE>
+    {<FONT color="purple">heading</FONT> Curl is cool}
+    This is                       <FONT color="green">|| Text with formatting.</FONT>
+    some   {<FONT color="purple">bold</FONT> important text}.
+    This {<FONT color="purple">italic</FONT> is interesting}:
+    {<FONT color="purple">itemize</FONT>                      <FONT color="green">|| Set up a group of items.</FONT>
+        {<FONT color="purple">item</FONT> Something.}         <FONT color="green">|| Each item gets a bullet.</FONT>
+        {<FONT color="purple">item</FONT>
+            {<FONT color="purple">tiny</FONT> some            <FONT color="green">|| All this stuff is in a tiny font.</FONT>
+                   more stuff
+            }
+        }
+        {<FONT color="purple">item</FONT> {<FONT color="purple">copyright</FONT>} and {<FONT color="purple">trademark</FONT>}, etc.
+        }
+    }
+</PRE></TD></TR>
+</TABLE>
+
+<P>
+The text formatting commands can accept parameters, as shown in the
+following example.
+<P>
+<TABLE border="1">
+<TR><TD><IMG  src="images/markup-2.jpg"></TR><TD>
+<TR><TD><PRE>
+    {<FONT color="purple">heading</FONT> <FONT color="orange">level</FONT> = <FONT color="brown">3</FONT>, Curl Is Flexible}
+    {<FONT color="purple">monospace</FONT>
+        <FONT color="orange">color</FONT> = <FONT color="brown">"red"</FONT>,
+        <FONT color="orange">font-size</FONT> = <FONT color="brown">0.4inch</FONT>,
+        This text is displayed differently.
+    }
+    {<FONT color="purple">paragraph</FONT>
+        <FONT color="orange">paragraph-left-indent</FONT> = <FONT color="brown">1.5inches</FONT>,
+        <FONT color="orange">paragraph-right-indent</FONT> = <FONT color="brown">3cm</FONT>,
+        <FONT color="orange">paragraph-justify</FONT> = <FONT color="brown">"right"</FONT>,
+        <FONT color="orange">font-family</FONT> = <FONT color="brown">"sans-serif"</FONT>,
+        This paragraph is displayed differently, too.  Many of the 
+        text formatting commands are just abbreviations for specifying 
+         {<FONT color="purple">monospace</FONT> text} or {<FONT color="purple">monospace</FONT> paragraph} with different default parameters.
+    }
+</PRE></TD></TR>
+</TABLE>
+
+<P>
+Unlike HTML, an applet in the Curl language can define its own text formats:
+<P>
+<TABLE border="1">
+<TR><TD><IMG  src="images/markup-3.jpg"></TD>
+<TD><I>The source below defines two text formats, </I><CODE>mine</CODE><I>
+and </I><CODE>yours</CODE><I>, and then uses both of them, as shown to the left.
+</I></TD>
+</TR>
+<TR><TD colspan="2"><PRE>
+    {<FONT color="purple">define-text-format</FONT> <FONT color="blue">mine</FONT> <FONT color="purple">as text with</FONT>
+        <FONT color="orange">color</FONT> = <FONT color="brown">"red"</FONT>,
+        <FONT color="orange">font-size</FONT> = <FONT color="brown">10point</FONT>
+    }
+    <FONT color="green">|| yours is like mine</FONT>
+    {<FONT color="purple">define-text-format</FONT> <FONT color="blue">yours</FONT> <FONT color="purple">as</FONT> <FONT color="blue">mine</FONT> <FONT color="purple">with</FONT>  
+        <FONT color="orange">color</FONT> = <FONT color="brown">"blue"</FONT>,
+        <FONT color="orange">font-family</FONT> = <FONT color="brown">"monospace"</FONT>
+    }
+    Some
+    {<FONT color="blue">mine</FONT> text is mine, and} 
+    {<FONT color="blue">yours</FONT> some text is yours.}
+</PRE></TD></TR>
+</TABLE>
+<P>
+As shown here, the definitions can be in the same file as the text
+to be displayed, but the definitions do not appear in the display.
+They can also be put into separate files to be used as a "style sheet"
+that can be included by other <CODE>.curl</CODE> files.
+
+<HR>
+<H2><A name="gui">GUI</A></H2>
+
+Curl&#8482; content language definitions (that is, stuff that is
+intended to be used, 
+not displayed) can be more than just text format definitions.  They can
+involve computation, which is the basis for user interaction.
+<P>
+<TABLE border="1">
+<TR><TD><IMG  src="images/gui-1.jpg"></TD>
+<TD><I>The source below defines a variable
+named </I><CODE>answer</CODE><I> and a procedure named
+</I><CODE>factorial</CODE><I>.  Everything that isn't in braces is
+treated as text to be formatted.  The result is shown to the left.</I></TD>
+</TR>
+<TR><TD colspan="2"><PRE>
+    {<FONT color="purple">let</FONT> <FONT color="blue">answer</FONT> = <FONT color="brown">1</FONT> + <FONT color="brown">4</FONT>}                <FONT color="green">|| A variable with computation.</FONT>
+    
+    The answer is {<FONT color="purple">value</FONT> <FONT color="blue">answer</FONT>}.       <FONT color="green">|| A "text format" that evaluates code.</FONT>
+
+    {<FONT color="purple">define-proc</FONT> {<FONT color="blue">factorial</FONT> number}
+        {<FONT color="purple">return</FONT> {<FONT color="purple">if</FONT> number == <FONT color="brown">1</FONT>
+                 <FONT color="purple">then</FONT> <FONT color="brown">1</FONT>
+                 <FONT color="purple">else</FONT> number * {<FONT color="blue">factorial</FONT> number - <FONT color="brown">1</FONT>}
+                }
+        }
+    }
+    The factorial of {<FONT color="purple">value</FONT> <FONT color="blue">answer</FONT>} is {<FONT color="blue">factorial</FONT> <FONT color="blue">answer</FONT>}.
+</PRE></TD></TR>
+</TABLE>
+<P>
+Curl&#8482; libaries provide a large number of operations and types of data;
+developers can also create their own.  The usual Graphical User
+Interface (GUI) elements are provided, and they can interact with
+other content, such as the text in this example.
+<P>
+<TABLE border="1">
+<TR><TD><IMG  src="images/gui-2.jpg"></TD>
+<TD><I>The code below defines a variable and a button that changes a
+parameter of the data in that variable. The screen shot to the left shows how
+this is displayed in the plug-in before the user presses the button.</I></TD>
+</TR>
+<TR><TD colspan="2"><PRE>
+    <FONT color="green">|| A variable holding an object with some marked-up content.</FONT>
+    {<FONT color="purple">let</FONT> <FONT color="blue">winner</FONT> = {<FONT color="purple">TextFlowBox</FONT> {<FONT color="purple">bold</FONT> Curl}}}
+                                  <FONT color="green">|| Code that produces text can</FONT>
+    The winner is {<FONT color="purple">value</FONT> <FONT color="blue">winner</FONT>}. <FONT color="green">|| be inserted into ordinary text.</FONT>
+
+    <FONT color="green">|| Produce not text to be formatted or a value to be computed, but
+    || a GUI object for display.</FONT>
+    {<FONT color="purple">CommandButton</FONT> 
+       <FONT color="green">|| Paremeterization such as we have already seen.</FONT>
+       <FONT color="orange">label</FONT> = <FONT color="brown">"Grow Font Size"</FONT>,   
+       <FONT color="green">|| A script to be stored in the GUI object, and accesed by the
+       || plug-in when the associated event occurs.</FONT>
+       {<FONT color="purple">on</FONT> Action <FONT color="purple">do</FONT>                           
+            {<FONT color="purple">set</FONT> <FONT color="blue">winner</FONT>.<FONT color="purple">font-size</FONT> = <FONT color="blue">winner</FONT>.<FONT color="purple">font-size</FONT> + <FONT color="brown">4</FONT>}}
+    }
+</PRE></TD></TR>
+</TABLE>
+<p>
+
+<TABLE border="1">
+<TR><TD><IMG border=1 src="images/gui-3.jpg"></TD>
+<TD><I>This is how the display looks after the user has pressed the button
+several times.</I></TD></TR>
+</TABLE>
+
+<P>
+The language coherently unifies the multiple paradigms of
+object-oriented, functional, procedural, and declarative programming.
+It uses both strong, static type declarations and dynamic,
+first-class, runtime type information.  Where consistent with Curl's
+Web-centric goals, the language is similar to Java and other
+C-influenced languages, but it avoids the known weaknesses. (See, for
+example, "A Comparison of the Curl Content Language and Java" in the <A
+href="http://www.curl.com/docs/appendices.pdf">appendix</A> to the <A
+href="http://www.curl.com/html/technology/documentation.jsp">Developer's
+Guide</A>.)
+<P>
+The following example shows what a class definition and type
+declarations look like in the language.  The display shows first the
+use of a built in layout box mechanism.  It then shows two uses of our
+own layout box.  Our layout box has some parameters set by default,
+and includes a button to grow the size of the text.  The picture below
+shows what this looks like after the user has pressed the middle box's
+button several times.
+<P>
+<TABLE border="1">
+<TR><TD><IMG src="images/gui-4.jpg"></TD></TR>
+<TR><TD><PRE>
+    <FONT color="green">|| We'll use picture a few times.  It is declared to be a Url.</FONT>
+    {<FONT color="purple">let</FONT> <FONT color="blue">picture</FONT>:<FONT color="purple">Url</FONT> = {<FONT color="purple">url</FONT> <FONT color="brown">"http://www.curl.com/img/curllogo1.gif"</FONT>}}
+
+    An HBox accepts a bunch of things, which it arranges horizontally:
+    {<FONT color="purple">HBox</FONT>
+        <FONT color="orange">border-width</FONT> = <FONT color="brown">0.1in</FONT>,
+        <FONT color="orange">border-color</FONT> = <FONT color="brown">"black"</FONT>,
+        {<FONT color="purple">image</FONT> <FONT color="orange">source</FONT> = <FONT color="blue">picture</FONT>}, {<FONT color="purple">bold</FONT> is cool}}
+
+
+    <FONT color="green">|| MyHBox is a new kind of content that behaves like HBox.</FONT>
+    {<FONT color="purple">define-class</FONT> <FONT color="blue">MyHBox</FONT> {<FONT color="purple">inherits</FONT> HBox}
+      <FONT color="green">|| It is constructed like an HBox, but also accepts an int parameter.</FONT>
+      {<FONT color="purple">constructor</FONT> {default increment:<FONT color="purple">int</FONT> = <FONT color="brown">2</FONT>, ...}
+        {<FONT color="purple">construct-super</FONT>
+            <FONT color="orange">border-width</FONT> = <FONT color="brown">0.2in</FONT>, 
+            <FONT color="orange">border-color</FONT> = <FONT color="brown">"purple"</FONT>,
+            ...,
+            {<FONT color="purple">CommandButton</FONT> <FONT color="orange">label</FONT> = <FONT color="brown">"Grow Font Size"</FONT>,   
+                {<FONT color="purple">on Action do</FONT>
+                    {<FONT color="purple">set self</FONT>.<FONT color="purple">font-size</FONT> = <FONT color="purple">self</FONT>.<FONT color="purple">font-size</FONT> + increment}
+                }
+            }
+        }
+      }
+    }
+
+    MyHBox, using all its defaults:
+    {<FONT color="blue">MyHBox</font> {<FONT color="purple">image</FONT> <FONT color="orange">source</FONT> = <FONT color="blue">picture</FONT>}, {<FONT color="purple">bold</FONT> is cool}}
+
+    MyHBox, with two parameters different:
+    <FONT color="green">|| Note that MyHBox accepts the same overriding parameters as HBox.</FONT>
+    {<FONT color="blue">MyHBox</font>
+        <FONT color="orange">increment</FONT> = <FONT color="brown">10</FONT>,
+        <FONT color="orange">border-color</FONT> = <FONT color="brown">"blue"</FONT>,
+        {<FONT color="purple">image</FONT> <FONT color="orange">source</FONT> = <FONT color="blue">picture</FONT>}, {<FONT color="purple">bold</FONT> is cool}}
+</PRE></TD></TR>
+</TABLE>
+
+<HR>
+<H2><A name="graphics">Graphics</A></H2>
+
+Curl provides a rich set of drawing and image processing tools.
+
+<TABLE border="1">
+<TR><TD><IMG  src="images/graphics-1.jpg"></TD>
+<TD><I>The code below intermixes formated text,
+</I><CODE>jpeg</CODE><I> images, graphics code and layout.<P>Note the
+continued use of named properties, variables, and functional
+composition of results. 
+<P>The Surge&#8482; plug-in displays
+text much more clearly than the images shown here.  The sample jpegs in
+these examples reduce combined text and graphics to the lowest common
+denominator, which the plug-in does not do.
+</I>
+</TD></TR>
+<TR><TD colspan="2"><PRE>
+    <FONT color="green">|| Packages can be written separately and imported into Curl content.</FONT>
+    {<FONT color="purple">import</FONT> * <FONT color="purple">from CURL.GRAPHICS.IMAGEFILTER</FONT>}
+    {<FONT color="purple">let</FONT> <FONT color="blue">leaves</FONT>:<FONT color="purple">Url</FONT> = {<FONT color="purple">url</FONT> <FONT color="brown">"curl://source/Textures/leaves.jpg"</FONT>}}
+
+    <FONT color="green">|| Properties like color and width can be specified for graphical objects.</FONT>
+    {<FONT color="purple">EllipticalArcGraphic</FONT> <FONT color="orange">color</FONT> = <FONT color="brown">"wheat"</FONT>,
+        <FONT color="orange">wedge-size</FONT> = <FONT color="brown">270degrees</FONT>, 
+        <FONT color="orange">width</FONT> = <FONT color="brown">1.5in</FONT>, <FONT color="orange">height</FONT> = <FONT color="brown">0.75in</FONT>
+    }
+    <FONT color="green">|| image creates a graphical object from the pixmap in a graphical source.</FONT>
+    {<FONT color="purple">image</FONT> <FONT color="orange">width</FONT> = <FONT color="brown">0.75in</FONT>, <FONT color="orange">height</FONT> = <FONT color="brown">0.75in</FONT>, <FONT color="orange">source</FONT> = <FONT color="blue">leaves</FONT>}
+
+    Note that graphics and text can be intermixed.
+    
+    <FONT color="green">|| A Frame is a graphical object.
+    || Here we take the same URL that gave the data for the image, make a
+    || FillPattern from it, blur that result (using a filter provided by the
+    || CURL.GRAPHICS.IMAGEFILTER package), and use that as the background for our
+    || Frame object.  The Frame's content is the bold text.</FONT>
+    {<FONT color="purple">Frame</FONT> <FONT color="orange">width</FONT> = <FONT color="brown">1in</FONT>, height = <FONT color="brown">1in</FONT>,
+        <FONT color="orange">background</FONT> = {<FONT color="purple">blur</FONT> {<FONT color="purple">FillPattern</FONT> <FONT color="blue">leaves</FONT>}},        
+        {<FONT color="purple">bold</FONT> <FONT color="orange">color</FONT> = <FONT color="brown">"yellow"</FONT>, Text over the background}
+    }
+</PRE></TD></TR>
+</TABLE>
+<p>
+More graphics demos and information are on the <A
+href="http://www.curl.com/html/demos/demos.jsp">Web site</A> and in
+the <a href="http://www.curl.com/html/technology/documentation.jsp?c1=1">
+documentation</A>.
+<p>
+You are not restricted to what is built in to existing libraries. 
+Because the language allows definition, you can use one language and
+environment for both creating and using new capabilities.
+<P>
+What's more, when graphics and user interaction operate in the same
+environment, they can affect each other.
+<P>
+The following example shows some text, buttons, and procedures
+such as we have already seen, but the PaintableGraphic is a new type
+of object that handles mouse events by manipulating its own pixels.
+
+<TABLE border="1">
+<TR><TD><IMG src="images/graphics-2.jpg"></TD>
+<TD><I>The box to the left shows what the display looks like after the
+user has drawn the word "Wow!" over the first image. The writing on
+the upper image instantly appears over the lower image, too, because
+they share the same underyling data.<P>Using the buttons on the lower
+image also affects both.</I>  
+</TD></TR>
+<TR><TD colspan="2"><PRE>
+    {<FONT color="purple">import</FONT> * <FONT color="purple">from CURL.GRAPHICS.IMAGEFILTER</FONT>}
+    {<FONT color="purple">include</FONT> <FONT color="brown">"PaintableGraphic.curl"</FONT>}
+
+    There is a {<FONT color="purple">monospace</FONT> .gif} that is shared by both by both images, below.
+    {<FONT color="purple">let</FONT> <FONT color="blue">shared-fill-pattern</FONT>:<FONT color="purple">FillPattern</FONT> =
+        {<FONT color="purple">brightness</FONT>            <FONT color="green">|| Wash out the image with a brightness filter.</FONT>
+            {<FONT color="purple">FillPattern</FONT> {<FONT color="purple">url</FONT> <FONT color="brown">"http://www.curl.com/img/curllogo1.gif"</FONT>}},
+            <FONT color="brown">0.7</FONT>
+        }
+    }
+
+    {<FONT color="purple">let</FONT> <FONT color="blue">drawable-picture</FONT>:<FONT color="blue">PaintableGraphic</FONT> =
+        {<FONT color="blue">PaintableGraphic</FONT> <FONT color="blue">shared-fill-pattern</FONT>}
+    }
+    {<FONT color="purple">VBox</FONT> <FONT color="orange">border-width</FONT> = <FONT color="brown">5pt</FONT>, <FONT color="orange">border-style</FONT> = "<FONT color="brown">ridge"</FONT>,
+        {<FONT color="purple">text</FONT> Hold down the left or right mouse button and drag your mouse
+         around the image.},
+        {<FONT color="purple">value</FONT> <FONT color="blue">drawable-picture</FONT>}
+    }
+
+    {<FONT color="purple">define-proc</FONT> {<FONT color="blue">make-button</FONT> label, filter}
+        {<FONT color="purple">return</FONT>
+            {<FONT color="purple">CommandButton</FONT> <FONT color="orange">label</FONT> = label,
+                {<FONT color="purple">on Action do</FONT>
+                    {<FONT color="purple">filter</FONT> <FONT color="blue">shared-fill-pattern</FONT>, <FONT color="orange">out</FONT> = <FONT color="blue">shared-fill-pattern</FONT>}
+                    {<FONT color="blue">drawable-picture</FONT>.<FONT color="purple">request-draw</FONT>}
+                }
+            }
+        }
+    }
+
+    {<FONT color="purple">VBox</FONT> <FONT color="orange">border-width</FONT> = <FONT color="brown">5pt</FONT> , <FONT color="orange">border-style</FONT> = <FONT color="brown">"ridge"</FONT>,
+        <FONT color="orange">width</FONT> = <FONT color="brown">4in</FONT>,
+        <FONT color="orange">color</FONT> = <FONT color="brown">"maroon"</FONT>,
+        <FONT color="orange">background</FONT> = <FONT color="blue">shared-fill-pattern</FONT>,
+        {<FONT color="purple">bold</FONT> This background sees the effect of drawing on the original,
+            and these buttons affect the original.},
+        {<FONT color="blue">make-button</FONT> <FONT color="brown">"Blur"</FONT>, <FONT color="purple">blur</FONT>},
+        {<FONT color="blue">make-button</FONT> <FONT color="brown">"Emboss"</FONT>, <FONT color="purple">emboss</FONT>}
+        <FONT color="green">|| Other filters you can try are: autolevel, sphere, twirl,
+        || contrast-decrease, contrast-increase,
+        || brightness-increase, brightness-decrease</FONT>
+    }
+</PRE></TD></TR>
+</TABLE>
+The full content of "PaintableGraphic.curl" is shown in <A href="listing-1.html">Listing 1</A>.
+
+<HR>
+<H2><A name="deployment">Deployment</A></H2>
+
+<H3><A name="implementation">Implementation</A></H3>
+
+Curl provides an "engine" that processes and executes Curl&#8482;
+content language source stored
+in files.  The engine can be invoked:
+<P>
+<UL>
+    <LI>By a browser using the Surge&#8482; plug-in.  Each
+        <CODE>.curl</CODE> file directly displayed as a page by the plug-in
+        is called an applet.  Applets can be embedded in other
+        technologies (e.g, HTML) and vice versa.
+
+    <LI>By a special browser with debugging and other program
+        development capability, called the Surge Lab&#8482;
+        Interactive Development Environment (IDE). 
+
+    <LI>By a shell (e.g., a command line interpreter) to process
+        scripts.
+    <LI>As an executable produced by Curl Corporation.
+        For example, the Surge Lab&#8482; IDE is itself
+        written using the Curl&#8482; content language.
+</UL>
+<P>
+The engine is given a file to process. The file is Just-In-Time (JIT)
+compiled into native machine code by the engine, and the resulting
+machine instructions are executed.
+<P>
+The plug-in and IDE save the values resulting from the execution of
+top-level code, format them, and then display the
+result.
+
+<H3><A name="modularity">Modularity</A></H3>
+<P>
+A group of files can be packaged together and treated as a reusable
+unit.  When a file being processed imports a package that is not
+already loaded, Curl's engine gets the package on the network.
+Packages may be distributed as source or as pre-parsed binaries.
+Such binaries are still more compact than machine code, and are still
+JIT compiled on the client.
+<P>
+Packages are versioned.  Different versions are treated as distinct
+packages and an application can specify which versions of a package are
+to be used.  Different versions of the same package can be used
+simultaneously by different parts of the same application.  The entire
+engine implementation is similarly versioned.  
+<P>
+When the engine runs more than one application (e.g., the plug-in
+displaying multiple applets in its history), 
+each running application is treated as a separate memory area. 
+Different applications using the same package work with different
+copies of (the heap area of) the package.
+<P>
+A small persistent object storage mechanism is provided.  This is used:
+<UL>
+    <LI>for efficiently and safely communicating between different
+        applications being run by the same engine, and
+    <LI>for long-term communication between different sessions of
+        the same or different applications.
+</UL>
+
+<H3><A name="security">Security</A></H3>
+<P>
+By default, Curl's engine prevents applets from doing such
+potentially compromising things as interacting with the operating system or
+other programs, using too many resources, or displaying graphics that
+purport to be something they are not.  Such applets cannot connect to
+Web sites other than the ones they came from.  They can use a limited
+amount of provided persistent storage.
+<P>
+End users can elect to specify that applets from certain directories
+(on their own or other machines) are to be granted additional
+privileges.  The source may be required to be verifiable using SSL.
+<P>
+Applets, scripts, and applications written in the language cannot corrupt
+or misuse their memory or that of any other technology's processes.
+
+<!-- CONCLUSION -->
+<HR> 
+<H2><A name="conclusion">Smaller, Faster, Better</A></H2>
+
+<P>
+Curl&#8482; technology covers a lot of ground. Procedural graphics
+and text can be integrated.  The same language can be used to define
+extended formatting operations and a validating GUI suite.  Programs
+play well with others by incorporating standard technologies like HTTP
+and XML, or by being embedded in HTML, and so forth.  Best practices
+are supported in the libraries, deployment mechanims, and the language
+itself. 
+
+<P>
+By combining this breadth with proper security and web-delivered
+module versioning, we can reliably deploy applications that do more
+computation on the client with less round-trips between client and
+server.  Dynamically fetched application data used by a single,
+flexible "page" means less data is needs to be transferred on each
+trip. (For example, the client does not need to reload the unchanging
+parts of the display.)  Repeated use of custom formats, personalized
+GUI, and procedural graphic definitions allows the whole application
+mechanism to be more compact.  It all comes together to produce a
+dramatically reduced computation and download load on the server --
+often an order of magnitude or more.  This gives users a better
+experience and site owners a lower operating cost and a stickier site.
+
+<P>
+We've seen plenty in Curl&#8482; technology that a variety of developers can
+find familiar.  When choosing what to begin using next of all the
+different Web technologies, those integrated through the Curl&#8482; content
+language should be the most rewarding.
+</BODY>
+</HTML>

@@ -1,0 +1,141 @@
+<HTML>
+<HEAD>
+<TITLE>Lisp/C Integration in Eclipse: References and Notes</TITLE>
+<meta name="description" content="Lisp/C Integration References and Notes">
+<meta name="keywords" content="lisp, c, integrate, reference, related, note">
+<meta name="date" content="9/1/97">
+<meta name="author" content="Howard Stearns">
+<meta name="copyright" content="Elwood Corp.">
+</HEAD>
+
+<BODY bgcolor="#FFFFFF">
+
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="conclusion.html">[Previous]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+<HR>
+
+<a name="notes"><h2>Notes</h2></a>
+
+<p>
+<a name="f1">1.</a> This is in contrast to ``interface'' style approaches such as
+Xerox's Inter-Language Unification (ILU).[<a href="#Janssen">Janssen</a>] The tight
+integration is not only compatible with interface approaches, but may
+make interface implementation easier.
+
+<p>
+<a name="f2">2.</a> When LINT is defined as a C preprocessor definition, <code>clObject</code> is
+actually a union of these, so that no warnings are issued with respect
+to casts. On some platforms, these two representations are the same
+anyway.
+
+<p>
+<a name="f3">3.</a> <code>float</code>, <code>double</code>,
+<code>(char *)</code> and <code>(wchar_t *)</code> primitive C data
+are accessible directly in their usual C format (i.e., without
+conversion) from <code>SINGLE-FLOAT</code>,
+<code>DOUBLE-FLOAT</code>, <code>BASE-STRING</code> and
+<code>EXTENDED-STRING</code> Lisp data. This includes null
+termination for strings.
+
+<p>
+<a name="f4">4.</a> Of course, that's how they are used in Lisp, too.
+
+<p>
+<a name="f5">5.</a> Currently, using <code>COMPILE-FILE</code> on a
+<code>DEFGENERIC</code> form does not create a named C function as it
+does for <code>DEFUN</code> forms. Thus generic functions must be
+called by funcalling their Lisp closure object or symbol instead of by
+calling a named C function directly. This restriction will be lifted
+in future versions.
+
+<p>
+<a name="f6">6.</a> These temporary variables should not effect performance, as a good
+C compiler should be able to eliminate them. They do effect
+readability/maintainability, however.
+
+<p>
+<a name="f7">7.</a> The design of the interpreter and integration with
+the compiler is outlined in the last <a
+href="conclusion.html#planned-work">section</a> of this paper.
+
+<a name="references"><h2>References</h2></a>
+
+<a name="Ansi">[Ansi]</a> ANSI X3. ``X3.226:1994, American National Standard for
+Programming Language Common LISP.'' American National Standards
+Institute, New York, NY,
+1994. (<a href="http://www.elwood.com/alu/table/references.htm#ansi">http://www.elwood.com/alu/table/references.htm#ansi</a>)
+
+<p>
+<a name="Attardi">[Attardi]</a> Attardi, Giuseppe. ``Overview of the ECL Compiler.''
+Unpublished. (<a href="ftp://ftp.di.unipi.it/pub/lang/lisp/">ftp://ftp.di.unipi.it/pub/lang/lisp/</a>)
+
+<p>
+<a name="Boehm">[Boehm]</a> Boehm, H., and M. Weiser, ``Garbage Collection in an
+Uncooperative Environment,'' Software Practice & Experience, September
+1988, pp. 807-820. (See <a href="#Demers">DEMERS</a>, below.)
+
+<p>
+<a name="Demers">[Demers]</a> Demers Alan, Hans Boehm and Carl Hauser. ``Posix Portable
+Common Runtime (PPCR) Documentation.'' Unpublished,
+1994. (<a href="ftp://parcftp.xerox.com/pub/ppcr/">ftp://parcftp.xerox.com/pub/ppcr/</a>)
+
+<p>
+<a name="Haible">[Haible]</a> Haible, Bruno and Michael Stoll. ``CLISP Documentation.''
+Unpublished. (<a href="ftp://ma2s2.mathematik.uni-karlsruhe.de/pub/lisp/clisp">ftp://ma2s2.mathematik.uni-karlsruhe.de/pub/lisp/clisp</a>)
+
+<p>
+<a name="Harbison">[Harbison]</a> Harbison, Samuel P. and Guy L. Steele Jr. ``C, A Reference
+Manual,'' 4th Ed. Prentice-Hall, Englewood Cliffs, NJ, 1995.
+
+<p>
+<a name="Hennessey">[Hennessey]</a> Hennessey, Wade. ``WCL: Delivering Efficient Common Lisp
+Applciations under Unix.''
+Unpublished. (<a href="ftp://cdr.stanford.edu/pub/wcl/">ftp://cdr.stanford.edu/pub/wcl/</a>)
+
+<p>
+<a name="Hoffmann">[Hoffmann]</a> Hoffmann, Ulrich. ``Using C as Target Code for Translating
+Highlevel Programming Languages.'' Unpublished,
+1993. (<a href="ftp.informatik.uni-kiel.de:/pub/kiel/apply/">ftp.informatik.uni-kiel.de:/pub/kiel/apply/</a>)
+
+<p>
+<a name="Janssen">[Janssen]</a> Janssen, Bill, Mike Spreitzer, Dan Larner, Chris
+Jacobi. ``Inter-Language Unification 2.0 Reference Manual.'' Xerox, Palo
+Alto, CA, 1998. (<a href="ftp://ftp.parc.xerox.com/pub/ilu/ilu.html">ftp://ftp.parc.xerox.com/pub/ilu/ilu.html</a>)
+
+<p>
+<a name="Kernighan">[Kernighan]</a> Kernighan, Brian W. and Dennis M Ritchie. ``The C
+Programming Language,'' 1st Ed. Prentice-Hall, Englewood Cliffs, NJ,
+1978.
+
+<p>
+<a name="Kiczales">[Kiczales]</a> Kiczales, Gregor, Jim des Rivieres and Daniel
+G. Bobrow. ``The Art of the Metaobject Protocol.'' MIT Press. Cambridge,
+MA, 1992. (<a href="http://www.elwood.com/alu/table/references.htm#mop">http://www.elwood.com/alu/table/references.htm#mop</a>)
+
+<p>
+<a name="Schelter">[Schelter]</a> Schelter, William. ``GCL Documentation.'' Unpublished,
+1994. (<a href="ftp://ftp.cli.com/pub/gcl/">ftp://ftp.cli.com/pub/gcl/</a>)
+
+<p>
+<a name="Stearns">[Stearns]</a> Stearns, Howard. ``Elwood Eclipse Common Lisp Product
+Documentation.'' Elwood, Oak Creek, WI,
+1997. (<a href="http://www.elwood.com/eclipse-info">http://www.elwood.com/eclipse-info</a>)
+
+<p>
+<a name="Steele">[Steele]</a> Steele, Guy L., Jr. ``Common Lisp: The Language,'' 1st
+Ed. Digital Press, Beford, MA, 1984.
+
+<p>
+<a name="Yuasa">[Yuasa]</a> Yuasa, Taiichi.  ``Design and Implementation
+of Kyoto Common Lisp.''  Journal of Information Processing, Vol. 13,
+No. 3, 1990.
+
+<hr>
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="conclusion.html">[Previous]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+</BODY>
+</HTML>

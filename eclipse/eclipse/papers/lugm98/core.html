@@ -1,0 +1,449 @@
+<HTML>
+<HEAD>
+<TITLE>Lisp/C Integration in Eclipse: Core Technologies</TITLE>
+<meta name="description" content="Core Technologies for Lisp/C Integration">
+<meta name="keywords" content="technology, identifier, representation,
+object, function, closure, values, control, dynamic, memory, gc, clos,
+mop, initialization, load, lisp">
+<meta name="date" content="9/1/97">
+<meta name="author" content="Howard Stearns">
+<meta name="copyright" content="Elwood Corp.">
+</HEAD>
+
+<BODY bgcolor="#FFFFFF">
+
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="lisp-c.html">[Previous]</A> 
+<A HREF="calling-lisp.html">[Next]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+<HR>
+
+<a name="core"><h2>2: Core Technologies</h2></a>
+
+The Eclipse strategy is to tightly integrate Lisp and C within a
+single address space, that is, within a single running program.<a
+href="references.html#f1"><b>1</b></a> This integration involves more
+than simply implementing Lisp within C. It requires Lisp programs and
+utilities to behave compatibly with other C programs and utilities. In
+order to accomplish all this, Elwood has synthesized a number of
+technologies for Eclipse:
+
+<p>
+1. A naming convention that reflects the differences between C and
+Lisp identifiers.
+
+<p>
+2. A core of C utilities for representing, initializing, and using
+run-time-typed data; closures over lexical functions; multiple values;
+dynamic binding; non-local exits; and cleanups.
+
+<p>
+3. Conservative garbage collection.
+
+<p>
+4. A run-time function-based interface to such Lisp utilities as the
+object system and environment initialization.
+
+<p>
+Few C programmers need go into the details of these; it is enough to
+know that they exist. The descriptions in this section do, however,
+give experienced Lisp programmers some understanding of how Lisp
+issues are handled in C by Eclipse. In all cases, each technology was
+implemented for maximum portability and so that the design would seem
+understandable and usable to both Lisp and C programmers.
+
+<a name="identifiers"><h3>2.1: Identifiers</h3></a>
+
+Eclipse defines a naming convention that maps Lisp names to C
+identifiers. Eclipse uses this convention for each C identifier it
+generates, including the entry points accessible in the Eclipse
+library and identifiers appearing in translated user code. These
+transformations apply only to C identifiers, all of which are
+compile-time entities. Run-time data, such as the strings that form
+<code>SYMBOL-NAME</code>s, are not transformed.
+
+<p>
+The transformation of identifiers is necessary because C imposes much
+harsher restrictions on identifiers than Lisp.
+
+<ul>
+<p><li> Lisp separates functions, variables, types, blocks, and labels into
+separate namespaces, while similarly named C objects conflict.
+
+<p><li> Lisp has a package system to modularize namespaces.
+
+<p><li> The scoping rules for names are different.
+
+<p><li> C has several globally reserved words.
+
+<p><li> C identifiers use a smaller character set, and do not allow
+identifiers to begin with numbers.
+</ul>
+
+<p>
+Eclipse addresses these differences by translating Lisp symbol names
+to C identifiers using a convention that follows standard C practice.
+
+<ul>
+<p><li> Normal function names do not have underscores, but capitalize the
+first letter of each word. A short package prefix is used. For
+example, <code>CL:LOGICAL-PATHNAME-TRANSLATIONS</code> =>
+<code>clLogicalPathnameTranslations()</code>, <code>USER::FOO-BAR</code> => <code>usrFooBar()</code>.
+
+<p><li> The names of ``constant'' variables holding Lisp symbols are in upper
+case with words separated by underscores. A short package prefix is
+used. For example, <code>clNIL</code>, <code>clCALL_ARGUMENTS_LIMIT</code>,
+<code>clLOGICAL_PATHNAME_TRANSLATIONS</code>, <code>usrFOO_BAR</code>.
+
+<p><li> Lexical variables are in lower case, and underscores are used. For
+example, <code>foo_bar</code>.
+</ul>
+
+<p>
+Eclipse uses package prefixes only when needed for scope or
+distinction, or because the identifier would be illegal or reserved
+without it. The shortest package nickname is used by default as the
+prefix. The system defines the package prefix ``cl'' for all system
+utilities and ``usr'' for utilities defined in the Lisp <code>COMMON-LISP-USER</code>
+package.
+
+<p>
+Lexical scope issues in function names (i.e., nested <code>FLET</code>/<code>LABEL</code>) are
+handled by preserving the nested chain of function names, separated by
+underscores. For example, <code>usrOuterFunction_InnerFunction()</code>. Eclipse
+preserves method specializers and qualifiers, and <code>SETF</code> function names,
+in a similar manner.
+
+<p>
+The ``pipe'' escape characters (e.g., <code>#\|</code>) used by the Lisp printer when
+a symbol has non-default case are also part of an Eclipse C identifier
+name.
+
+<p>
+
+Finally, when characters appear in a Lisp symbol that cannot appear in
+a C identifier, Eclipse replaces the characters with an alphabetic
+name in a contrasting case. Eclipse defines names for all the
+non-alphabetic members of the <code>BASE-CHAR</code> repertoire, but
+uses hex codes for extended characters (i.e., Unicode). For example,
+<code>*DEBUG-IO*</code> => <code>clstarDEBUG_IOstar</code>,
+<code>user::|lower-CASE|</code> => <code>usrpipelowerpipe_CASE</code>,
+<code>LIST*</code> => <code>clLISTstar</code>,
+<code>clListSTAR()</code>.
+
+<p>
+Lisp names that are interned in the C package are exempt from this
+``name mangling.'' This allows Lisp programs to reference C utilities
+that do not follow these conventions.
+
+<a name="representation"><h3>2.2: Representation</h3></a>
+
+Eclipse provides a single C header file, ``eclipse.h,'' which defines
+Lisp data representations. Any C code that uses the Eclipse library
+must include this file. The following sections describe some of the
+representations defined in ``eclipse.h.''
+
+<a name="objects"><h4>2.2.1: Objects</h4></a>
+
+The header file defines a C typedef called <code>clObject</code>,
+which is used by Eclipse to represent each Lisp
+datum. <code>clObject</code> is defined as a machine word that can be
+treated as either a pointer or as immediate data.<a
+href="references.html#f2"><b>2</b></a>
+
+<p>
+Most kinds of <code>clObject</code>s are implemented in Eclipse as pointers to a
+heap allocated structure. The first component of this structure
+contains type information, including a pointer to the class
+metaobject. On some architectures, Eclipse saves space for some data
+types by using the least significant bits of the pointer for typing
+information. Eclipse also represents some data such as fixnums and
+characters by storing them directly in the <code>clObject</code> word as immediate
+data. Again, the least significant word bits are used for typing. In
+these latter cases, Eclipse reaches the class metaobject through a
+globally known array, indexed by the low <code>clObject</code> bits.
+
+<p>
+The header file defines a macro to access the class metaobject of all
+the built-in <code>clObject</code>s, including structure and instance
+objects. The header file and the Eclipse library define a number of
+macros and functions for creating different kinds of
+<code>clObject</code>s from corresponding C data, and for accessing
+the internal C data from different kinds of <code>clObject</code>s.<a
+href="references.html#f3"><b>3</b></a>
+
+<p>
+To aid in linting, and to shield code from changes in <code>clObject</code>
+implementation, the header file defines an assignment macro,
+<code>clSetq(place, value)</code>, which usually expands into <code>((place) = (value))</code>.
+
+<a name="functions"><h4>2.2.2: Functions</h4></a>
+
+Eclipse compiles each Lisp function to a corresponding C function. The
+generated C function uses the C variable argument mechanism
+(varargs/stdargs) to accept <code>clObject</code>s as arguments. The arguments are
+exactly the same as they are in Lisp, except that an additional
+argument, the ``symbol'' <code>clEOA</code>, is appended as an End-Of-Arguments
+marker. It is used by the function during argument parsing. Eclipse
+<code>COMPILE-FILE</code> automatically adds this <code>clEOA</code> marker to Lisp function
+calls in generated code. This use of <code>clEOA</code> is less error prone in
+hand-written/modified C code than insisting that an explicit argument
+count be provided. Some Lisp implementations pass data on a special
+Lisp data stack. Eclipse programs pass arguments as ordinary C data.
+
+<p>
+No extra arguments are needed in Eclipse to represent the Lisp
+function's defining environment. C programmers can call any Lisp
+function without needing to know if or how the function refers to an
+enclosing environment. Eclipse handles this automatically as follows.
+
+<p>
+Eclipse represents Lisp functions at run-time as closure <code>clObject</code>s
+that contain the code to be executed (i.e., a C function pointer) and
+the ``closed-over'' environment. The closure environment is defined by
+Eclipse as a vector of those variable <code>clBinding</code>s (addresses of
+<code>clObject</code>s) that were defined in the function's enclosing lexical
+environment and used within the inner function code. For many
+functions, the environment is empty; that is, there are no lexical
+variables used within the function that are defined outside of
+it. When Eclipse creates a closure <code>clObject</code>, it fills the closure's
+environment with any necessary bindings.
+
+<p>
+In general, Eclipse uses ordinary C variables to represent local Lisp
+variables. Eclipse <code>COMPILE-FILE</code> uses the same variable name and scope
+in the generated C code as was present in the original Lisp
+source. Eclipse declares these variables as being of type
+<code>clObject</code>. Eclipse uses the address of the C variable as the <code>clBinding</code>
+of a closed-over Lisp variable with dynamic-extent. However, for a
+closed-over Lisp variable with indefinite-extent, Eclipse generates
+code that heap allocates a <code>clBinding</code>. <code>clBinding</code>s are shared by all
+closures over them, but environments are not.
+
+<p>
+For each function defined in a non-empty environment, Eclipse
+<code>COMPILE-FILE</code> generates two ``environment hooks'' that point to a
+closure's environment. One hook is defined statically, outside the C
+function and the other is a local variable within the C function
+definition. The static environment hook is initialized by Eclipse when
+the closure <code>clObject</code> is created. Generated code initializes the local
+environment hook from the static hook immediately upon entering the
+function on each call. All references to enclosing variables from
+within the inner generated function use this local environment hook to
+access the <code>clBinding</code>. Using a cached local variable allows for
+reentrant calls to identical code that is closed over different
+bindings.
+
+<p>
+For ``top-level'' functions that only create closures once, Eclipse
+initializes the static hook once and it is never changed. For
+arbitrary Lisp closure objects created at run time, it is necessary to
+call such functions through their closure objects using
+<code>FUNCALL</code> or <code>APPLY</code>.<a
+href="references.html#f4"><b>4</b></a> <code>FUNCALL</code> and
+<code>APPLY</code> set the environment hook if necessary before
+calling the implementing C function. The address of the static
+environment hook is stored by Eclipse in the closure
+<code>clObject</code>.
+
+<a name="values"><h4>2.2.3: Multiple Values</h4></a>
+
+Eclipse defines each generated C function to return the ``primary'' Lisp
+value as an <code>clObject</code> value. Eclipse also defines a globally known
+pointer to a buffer of multiple <code>clObject</code> values. Some functions just
+return the values returned by other functions (i.e., are tail
+calls). However, if a function returns a single value (e.g., the value
+of a variable), then a macro from ``eclipse.h'' must be used to indicate
+in the multiple values buffer that only one value is returned. The
+function <code>clValues()</code> can also be used to fill the multiple value buffer
+with zero or more values. Receiving multiple values is accomplished by
+using a macro from ``eclipse.h'' that introduces a new multiple values
+buffer as a local (automatic, stack) C variable. The macro stores the
+location of this new buffer in the globally known pointer.
+
+<a name="dynamic"><h4>2.2.4: Dynamic Environment</h4></a>
+
+Eclipse uses a Lisp-specific control stack to keep dynamic environment
+information such as dynamic bindings, active cleanups, and exits such
+as catchers and closed over blocks/labels. The elements of this stack
+are pointers to data identifying the kind of information.
+
+<ul>
+<p><li> Shallow binding is used for dynamic variables. Eclipse binds special
+variables by placing the symbol and its old value on the control
+stack, and setting the <code>SYMBOL-VALUE</code> to a new value.
+
+<p><li> Exits are implemented with <code>setjmp()<code></code>/longjmp()</code>. Eclipse initializes a
+C jmp_buf and caches the state of the multiple values machinery.
+</ul>
+
+<p>
+Eclipse defines macros in ``eclipse.h'' for using the control stack to
+establish dynamic bindings, blocks, tagbodies, catchers, and
+cleanups. The header file also defines macros for non-local transfers
+such as <code>RETURN-FROM</code>, <code>GO</code>, and <code>THROW</code> that unwind the control stack as
+necessary. Besides using the appropriate <code>longjmp()</code> machinery, these
+transfers take care of unwinding dynamic bindings and executing
+<code>UNWIND-PROTECT</code> cleanup forms.
+
+<a name="c"><h4>2.2.5: C Implementations</h4></a>
+
+<code>COMPILE-FILE</code> does not generate platform- or
+compiler-specific code. Eclipse abstracts any platform or compiler
+dependencies into conditionally defined macros within ``eclipse.h.''
+These macros cover such issues as word size, variable argument
+mechanism, and function prototypes. This allows the same Eclipse code
+to be processed by ANSI/ISO C compilers [<a
+href="references.html#Harbison">Harbison</a>], traditional classic/K&R
+C compilers [<a href="references.html#Kernighan">Kernighan</a>], or
+C++ compilers.
+
+<a name="memory"><h3>2.3: Memory Management</h3></a>
+
+Eclipse uses a conservative, non-relocating garbage collector,
+publicly available from Xerox PARC.[<a
+href="references.html#Boehm">Boehm</a>] In this case, ``conservative''
+means that C data, including that held on the C stack or in registers,
+are traced by the garbage collector. The system assumes that anything
+that looks like it could be a pointer to data is live, and the data
+there is not collected. This allows user-written and Eclipse-generated
+C code to pass Lisp data around as ordinary C data without any need to
+``register'' them by hand with the garbage collector. In addition, the
+collector recognizes a pointer that appears to point to within a heap
+allocated datum. This allows the collector to work with ``mangled
+pointers'' such as those described in <a
+href="core.html#objects">Section 2.2.1</a>.
+
+<p>
+Non-relocating garbage collectors do not move heap allocated data
+during collection. This allows Eclipse to implement <code>clObject</code>s as
+pointers to data, as opposed to ``indexes,'' ``handles,'' ``pointers to
+pointers,'' or other more complex things.
+
+<p>
+The garbage collector uses incremental/generational collection when
+supported by the operating system. This means that only a small amount
+of work is done during each collection, which reduces delays.
+
+<p>
+The garbage collector used was written for use in arbitrary C/C++
+programs, and was not modified for use in Eclipse. It can be used
+directly by C programmers without using the rest of Eclipse.
+
+<p>
+The collector defines alternatives to the standard <code>malloc()</code>
+utilities. An application that uses <code>malloc()</code> or <code>sbrk()</code> will not work
+with Eclipse, but must instead be changed to use <code>GC_malloc()</code>. Care
+must be taken when calling certain operating system utilities from C
+code, because they sometimes use incompatible malloc-like utilities
+internally.
+
+<p>
+If the provided garbage collector is undesirable for some reason, it
+can be replaced with any user-provided, conservative, non-relocating
+system with a malloc-like interface.
+
+<a name="function"><h3>2.4: Function-Based Interface</h3></a>
+
+The Common Lisp Object System (CLOS), and the semantics of file
+loading are two examples of Lisp utilities that have no analog in
+C. Eclipse defines functions so that these utilities may be used
+within C programs.
+
+<a name="mop"><h4>2.4.1: CLOS-MOP</h4></a>
+
+Eclipse implements not just the Common Lisp Object System (CLOS), but
+its complete MetaObject Protocol (MOP).[<a
+href="references.html#Kiczales">Kiczales</a>] The CLOS-MOP defines a
+function-based interface for defining, instantiating, and accessing
+classes, and for defining and using generic functions and methods. It
+is through these MOP functions that eclipse allows object-oriented
+Lisp to be accessed by C, which defines only function-like interfaces
+to data.<a href="references.html#f5"><b>5</b></a>
+
+<a name="initialization"><h4>2.4.2: Initialization</h4></a>
+
+Unlike C, Lisp source files can contain not only function definitions,
+but arbitrary data as compile-file literals, and arbitrary top-level
+code that is not part of a function definition. When a program or user
+loads a Lisp file into any Lisp implementation, the system creates the
+literal data, initializes it, and executes the top level code. C
+provides no similar mechanism.
+
+<p>
+Consider, for example, a file that contains the following function definition:
+
+<pre>
+   (DEFUN MY-FUNCTION (A B) 
+     (LIST A B))
+</pre>
+
+<code>DEFUN</code> is a macro that essentially expands this function
+definition into something like:
+
+<pre>
+   (SETF (SYMBOL-FUNCTION 'MY-FUNCTION)
+     (LAMBDA (A B) 
+	(LIST A B)))
+</pre>
+
+<p>
+When this is loaded into any Lisp implementation, the system creates a
+function object (a closure) that is stored in the <code>SYMBOL-FUNCTION</code> of
+the symbol <code>MY-FUNCTION</code>.
+
+<p>
+In Eclipse, when <code>COMPILE-FILE</code> generates a C file, it
+generates one C function for each Lisp function in the source. It also
+generates one extra C function, taking no arguments and returning no
+value. This ``initialization function'' executes the ``load-time''
+code. Calling this function is semantically equivalent to loading the
+corresponding Lisp file. For example, the Eclipse-generated
+initialization function for a file containing the previously discussed
+<code>DEFUN</code> will intern the symbol <code>MY-FUNCTION</code> and
+initialize it with a closure <code>clObject</code>. (See <a
+href="core.html#functions">Section 2.2.2</a>.)
+
+<p>
+Before an applications calls any ``Lisp functions,'' it must first call
+all the initialization functions for each user-generated file, as well
+as those for the Eclipse library. For example:
+
+<pre>
+   /* Initialize Eclipse system code. */
+   clInit();       /* Initialize Eclipse run-time library. */
+   /* The next line is not needed in most applications. */
+   clInitD();      /* Initialize Eclipse development library. */
+   /* Initialize user code. */
+   usrMyFile();    /* An Eclipse-generated initialization function 
+		      for "my-file.lisp" */
+   /* Now Lisp can be used. */
+   clPrint(clEval(clRead(clEOA), clEOA), clEOA); ...
+</pre>
+
+<p>
+Execution of the Eclipse-generated initialization function ensures that:
+
+<ul>
+<p><li> Symbols are interned.
+
+<p><li> Other compile-time and load-time data are created and initialized,
+including function closures for top-level functions.
+
+<p><li> The closures of top-level functions are stored in the symbols.
+
+<p><li> Any necessary environment hooks for these closures are initialized.
+The top-level Eclipse read-eval-print loop program is essentially a
+call to <code>clInit()</code> and <code>clInitD()</code>, followed by a call to the
+read-eval-print loop.
+</ul>
+
+<HR>
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="lisp-c.html">[Previous]</A> 
+<A HREF="calling-lisp.html">[Next]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+</BODY>
+</HTML>

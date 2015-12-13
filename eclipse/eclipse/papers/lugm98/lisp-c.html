@@ -1,0 +1,154 @@
+<HTML>
+<HEAD>
+<TITLE>Lisp/C Integration in Eclipse</TITLE>
+<meta name="description" content="Lisp/C Integration in Eclipse">
+<meta name="keywords" content="Lisp, C, Eclipse, integrate, compile, translate">
+<meta name="date" content="9/1/98">
+<meta name="last-update" content="3/15/99">
+<meta name="author" content="Howard Stearns">
+<meta name="copyright" content="Elwood Corp.">
+</HEAD>
+
+<BODY bgcolor="#FFFFFF">
+
+<h1>Lisp/C Integration in Eclipse</h1>
+<center>
+<a href="mailto:howard@elwood.com"><b>Howard R. Stearns</b></a><br>
+<a href="http://www.elwood.com">Elwood Corporation</a><br>
+1-414-764-7500<br>
+Copyright &copy; 1998, Elwood Corporation<br>
+</center>
+
+<blockquote><i>[This paper was presented at the <a
+href="http://lisp.org/table/conferences.htm#luv">40th Anniversary of Lisp
+Conference</a>, November 17, 1998, Berkeley, CA.]</i></blockquote>
+
+<a name="abstract"><h2>Abstract</h2></>
+
+<blockquote>
+The <a href="http://www.elwood.com/eclipse-info">Eclipse Common
+Lisp</a> system serves as a Lisp-to-C translator, an extendible Lisp
+library for C programmers, and a complete traditional top-level Lisp
+system implemented in portable C. Using Eclipse, hand-written or
+system-generated C calls to Lisp look like ordinary C function calls,
+and Lisp data can be manipulated as ordinary C data by
+programs. Conversely, C function calls look like ordinary function
+calls within Lisp programs. We describe how this is used, the
+technology that implements it, and list related work.
+</blockquote>
+
+<DL>
+<dd> <a href="#introduction"><b>1: Introduction</b></a>
+
+<dd> <a href="core.html"><b>2: Core Technologies</b></a>
+<DL>
+<dd> <a href="core.html#identifiers">2.1: Identifiers</a>
+
+<dd> <a href="core.html#representation">2.2: Representation</a>
+<DL>
+<dd> <a href="core.html#objects"><i>2.2.1: Objects</i></a>
+<dd> <a href="core.html#functions"><i>2.2.2: Functions</i></a>
+<dd> <a href="core.html#values"><i>2.2.3: Multiple Values</i></a>
+<dd> <a href="core.html#dynamic"><i>2.2.4: Dynamic Environment</i></a>
+<dd> <a href="core.html#c"><i>2.2.5: C Implementations</i></a>
+</DL>
+
+<dd> <a href="core.html#memory">2.3: Memory Management</i></a>
+
+<dd> <a href="core.html#function">2.4: Function-Based Interface</a>
+<DL>
+<dd> <a href="core.html#mop"><i>2.4.1: CLOS-MOP</i></a>
+<dd> <a href="core.html#initialization"><i>2.4.2: Initialization</i></a>
+</DL>
+</DL>
+
+<dd> <a href="calling-lisp.html"><b>3: Using Lisp from C</b></a>
+<DL>
+<dd> <a href="calling-lisp.html#direct">3.1: Direct Calls</a>
+<dd> <a href="calling-lisp.html#funcall">3.2: Funcall</a>
+<dd> <a href="calling-lisp.html#example">3.3: Example Of Generated Code</a>
+<dd> <a href="calling-lisp.html#other-calls">3.5: Other Lisp Utilities and Their Effect on Calling Lisp Functions</a>
+
+<DL>
+<dd> <a href="calling-lisp.html#eval"><i>3.5.1: Eval</i></a>
+<dd> <a href="calling-lisp.html#load"><i>3.5.2: Load</i></a>
+<dd> <a href="calling-lisp.html#passing-data"><i>3.5.3: Passing Lisp Data</i></a>
+</DL>
+</DL>
+
+<dd> <a href="calling-c.html"><b>4: Using C from Lisp</b></a>
+
+<dd> <a href="conclusion.html"><b>5: Past And Future</b></a>
+<DL>
+<dd> <a href="conclusion.html#related-work">5.1: Related Work</a>
+<dd> <a href="conclusion.html#planned-work">5.2: Planned Work</a>
+</DL>
+
+<dd> <a href="references.html#notes"><b>Notes</b></a>
+<dd> <a href="references.html#references"><b>References</b></a>
+</DL>
+
+<a name="introduction"><h2>1: Introduction</h2></a>
+
+<p>
+Eclipse Common Lisp is a commercial implementation that makes the full
+ANSI language definition [<a href="references.html#Ansi">Ansi</a>]
+available to programmers in two ways: as a traditional top-level
+program featuring a read-eval-print loop, and as a C-callable
+library.[<a href="references.html#Stearns">Stearns</a>] The library
+uses normal C naming and function-calling conventions, is suitable for
+use directly by C programmers, and was used to implement the top-level
+program. In addition, the library and top-level contain a definition
+of <code>COMPILE-FILE</code> that generates human-readable, lintable C
+code that can be compiled and linked with the library. The generated
+code shares the same naming and calling conventions as the library,
+and, in fact, was used to generate the library C source code from Lisp
+source code.
+
+<p>
+This language implementation strategy provides the following benefits:
+
+<ul>
+<p><li> Eclipse allows programmers to develop whole or partial applications
+in Lisp, and then translate the source to maintainable C code.
+
+<p><li> Eclipse enables applications using system-supplied or user-written
+Lisp utilities to have the same delivery options with respect to
+executables, libraries, licensing, and so forth, as any other C
+program developed with the aid of a C-callable library.
+
+<p><li> Eclipse integrates Lisp code with code developed in C or any
+C-compatible language. Eclipse enables Lisp code to easily call C and
+vice versa. C programs can hold, examine, pass and manipulate Eclipse
+created-Lisp data directly. An application's controlling <code>main()</code>
+program can be written in any language.
+
+<p><li> Eclipse makes the capabilities of Lisp directly available to C
+programmers, who can treat both system-defined utilities and those
+produced by <code>COMPILE-FILE</code> as though they were part of any sophisticated
+C library.
+
+<p><li> Eclipse can be easily ported to a wide variety of platforms, and
+runs on three Unix systems and 32-bit Windows (NT/95, and so forth),
+all from the same source code.
+</ul>
+
+<p> What follows is a description of how this is accomplished. <a
+href="core.html#core">Section 2</a> describes the core technologies
+Eclipse uses to integrate Lisp and C. <a
+href="calling-lisp.html#c-calls-lisp">Section 3</a> describes how
+Eclipse allows Lisp utilities to be used from C code, and gives an
+example of generated code. <a
+href="calling-c.html#lisp-calls-c">Section 4</a> describes how C
+utilities are used from Lisp code. <a
+href="conclusion.html#past-and-future">Section 5</a> lists related
+work and suggests where this technology might be headed.
+
+<HR>
+
+<A HREF="lisp-c.html">[Paper Contents]</A> 
+<A HREF="core.html">[Next]</A> 
+<A HREF="http://www.elwood.com/eclipse-info">[Eclipse Home Page]</A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,338 @@
+<HTML>
+<HEAD>
+<TITLE>Curl Technology article: Language Sidebar</TITLE>
+</HEAD>
+<BODY>
+<H1>Curl&#8482; Content Language Features</H1>
+
+Some of the features of the Curl language are described here:
+
+<UL>
+ <LI><A href="#types">Strongly typed</A> with true non-null types plus
+ type-tagged data (even primitives).
+ <LI><A href="#calling">Flexible Calling</A> with required or optional
+ keyword arguments, and multiple return values. 
+ <LI><A href="#functional">Functional (procedure-based) Programming and
+ scripting</A>, with top-level procedure call evaluation and full
+ lexical closure procedure definitions with recursion.
+ <LI><A href="#oop">Object-Oriented Programming</A> with multiple
+ inheritance, parameterized classes, accessors, options, and dynamic
+ handlers.
+ <LI><A href="#other">Other features</A> include: 
+   <UL>
+   <LI>secure modularity, 
+   <LI>automatic memory management,   
+   <LI>OO exception handling, and
+   <LI>iterators.
+  </UL>
+</UL>
+
+There is a lot of programmer experience with these capabilities, and
+they are largely accepted and expected in contemporary languages.  The
+real innovation of <A href="curl.html">Curl&#8482; technology</A> is in
+how these features are supported and used by the implementation and
+libraries.
+
+<HR>
+<H3><A name="types">Types</A></H3>
+<UL>
+  <LI>strong, compile-time type checking
+  <UL>
+    <LI>can specify type declarations as either allowing or
+    disallowing "null" object references
+    <LI>can specify type declarations as allowing any type,
+    including primitives, in which case 
+       type-tagged dynamic data is used
+  </UL>
+  <LI> Types are first-class
+  <LI> Units
+</UL>
+
+<HR>
+<H3><A name="calling">Flexible Calling</A></H3>
+
+<H4><A name="positional">Required positional arguments</A>:</H4>
+
+  Parameters to procedures and methods can be declared similarly to most languages, like this:
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">always-the-same-example</FONT> foo, bar, baz}
+      <FONT color="green">|| body of always-the-same-example</FONT>
+  }
+  </PRE>
+  When calling, each argument must be supplied in order:
+  <PRE>
+  {<FONT color="blue">always-the-same-example</FONT> <FONT color="brown">1</FONT>, <FONT color="brown">"two"</FONT>, <FONT color="brown">3feet</FONT>}
+  </PRE>
+
+<H4><A name="keyword">Optional named (keyword) arguments with default values</A>:</H4> 
+
+  Parameters can be given default values:
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">named-parameters-example</FONT> 
+                   <FONT color="orange">name</FONT> = <FONT color="brown">""</FONT>,
+                   <FONT color="green">|| id defaults to whatever name is,
+                   || regardless of whether name was supplied
+                   || or defaulted</FONT>
+                   <FONT color="orange">id</FONT> = name,  
+                   <FONT color="orange">color</FONT> = <FONT color="brown">"black"</FONT>,
+                   <FONT color="orange">size</FONT> = <FONT color="brown">4pt</FONT>}
+      <FONT color="green">|| body of named-parameters-example</FONT>
+  }
+  </PRE>
+  When calling, these can be supplied in any order, or not
+  supplied at all:
+  <PRE>
+  {<FONT color="blue">named-parameters-example</FONT>}
+  {<FONT color="blue">named-parameters-example</FONT> <FONT color="orange">size</FONT> = <FONT color="brown">2in</FONT>, <FONT color="orange">name</FONT> = <FONT color="brown">"Howard"</FONT>}
+  {<FONT color="purple">new</FONT> <FONT color="blue">MyClass</FONT>, <FONT color="orange">parameter-foo</FONT> = <FONT color="brown">"red"</FONT>, <FONT color="orange">parameter-bar</FONT> = <FONT color="brown">"black"</FONT>}
+  </PRE>
+  This is useful for supplying attribute values in a style like
+  HTML or XML.  It is also convenient for code maintenance, because
+  new parameters can be added in a way that does not require all the old
+  callers to be updated.
+
+<H4><A name="rest">Variable number of unspecified (rest) arguments</A>:</H4>
+
+  A procedure can take any number of arguments, and these can be
+  spliced into another call.
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">trampoline-example</FONT> ...}
+     {<FONT color="blue">the-real-processing</FONT> <FONT color="brown">42</FONT>, <FONT color="purple">true</FONT>, ...}
+  }
+  </PRE>
+  You can also <A href="#iterate">iterate</A> over the
+  <CODE>...</code> arguments:
+ 
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">return-the-first-int</FONT> ...}
+     {<FONT color="purple">for</FONT> arg <FONT color="purple">in</FONT> ... <FONT color="purple">do</FONT> 
+        {<FONT color="purple">if</FONT> (arg <FONT color="purple">isa</FONT> <FONT color="purple">int</FONT>) 
+         <FONT color="purple">then</FONT> {<FONT color="purple">return</FONT> arg} 
+        }
+     }
+     {<FONT color="purple">return null</FONT>}
+  }
+  {<FONT color="blue">return-the-first-int</FONT> <FONT color="brown">"hello"</FONT>, {<FONT color="blue">GoodBye</FONT>}, <FONT color="brown">42</FONT>, <FONT color="brown">17.9</FONT>, <FONT color="brown">3</FONT>} <FONT color="green">|| => 42</FONT>
+  </PRE>
+
+  <P>
+  All of these can be combined together.  The keyword arguments
+  can be defined in any order, and supplied in any order.  Real code
+  is not typically so complicated, but it's nice to know it's possible.
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">combined-example </FONT>
+                   <FONT color="orange">name</FONT> = <FONT color="brown">""</FONT>,
+                   foo,
+                   <FONT color="orange">id</FONT> = name,
+                   bar, baz,
+                   <FONT color="orange">color</FONT> = <FONT color="brown">"black"</FONT>,
+                   <FONT color="orange">size</FONT> = <FONT color="brown">4pt</FONT>,
+                   ...}
+     <FONT color="green">|| body of combined-example</FONT>
+  }
+  </PRE>
+  In the following example calls:<BR>
+  <FONT color="brown">1</FONT> is always the first argument and is bound to <CODE>foo</CODE><BR>
+  <FONT color="brown">"two"</FONT> is always the second argument and is bound to <CODE>bar</CODE><BR>
+  <FONT color="brown">3feet</FONT> is always the third argument and is bound to <CODE>baz</CODE><BR>
+  When they appear, <FONT color="brown"><I>42</I></FONT>, <FONT color="brown"><I>"some-more-data"</I></FONT>, and <FONT color="brown"><I>my-key = 12</I></FONT>
+are included in the <CODE>...</CODE>parameter:
+  <PRE>
+  {<FONT color="blue">combined-example</FONT> <FONT color="brown">1</FONT>, <FONT color="brown">"two"</FONT>, <FONT color="brown">3feet</FONT>}
+  {<FONT color="blue">combined-example</FONT> <FONT color="brown">1</FONT>, <FONT color="brown">"two"</FONT>, <FONT color="brown">3feet</FONT>, <FONT color="brown"><I>42</I></FONT>, <FONT color="brown"><I>"some more data"</I></FONT>}
+  {<FONT color="blue">combined-example</FONT> <FONT color="brown">1</FONT>, <FONT color="brown"><I>my-key = 12</I></FONT>, <FONT color="brown">"two"</FONT>, <FONT color="brown">3feet</FONT>, <FONT color="brown"><I>42</I></FONT>, <FONT color="brown"><I>"some more data"</I></FONT>}
+  {<FONT color="blue">combined-example</FONT> <FONT color="orange">id</FONT> = <FONT color="brown">99</FONT>, <FONT color="orange">color</FONT> = <FONT color="brown">"red"</FONT>, 
+       <FONT color="brown">1</FONT>, <FONT color="brown">"two"</FONT>, <FONT color="brown">3feet</FONT>, <FONT color="brown"><I>42</I></FONT>, <FONT color="brown"><I>"some more data"</I></FONT>}
+  {<FONT color="blue">combined-example</FONT>   <FONT color="green">|| same results as the previous call</FONT>
+       <FONT color="brown">1</FONT>, <FONT color="brown">"two"</FONT>, <FONT color="orange">color</FONT> = <FONT color="brown">"red"</FONT>, <FONT color="brown">3feet</FONT>, <FONT color="brown"><I>42</I></FONT>, <FONT color="orange">id</FONT> = <FONT color="brown">99</FONT>, <FONT color="brown"><I>"some more data"</I></FONT>}
+  </PRE>
+
+<H4><A name="values">Multiple return values</A>:</H4>
+
+  Instead of having to define "out" parameters that will be
+  modified to give additional values to the caller, a procedure or
+  method can just return however many values it needs to.  The
+  procedure <CODE>get-report-example</CODE> takes one <CODE>int</CODE>
+  argument and returns three values: a <CODE>String</CODE>, a
+  <CODE>DateTime</CODE>, and a <CODE>ReportData</CODE>:
+  <PRE>
+  {<FONT color="purple">define-proc</FONT> {<FONT color="blue">get-report-example</FONT> id:<FONT color="purple">int</FONT>}:(name:<FONT color="purple">String</FONT>, 
+                                    last-updated:<FONT color="purple">DateTime</FONT> 
+                                    data:ReportData)
+     <FONT color="green">|| compute values for name, last-updated, data</FONT>
+     {<FONT color="purple">return</FONT> name, last-updated, data}
+  }
+  
+  <FONT color="green">|| later on, we bind all three results from a call</font>
+  {<FONT color="purple">let</FONT> (this-report-name:<FONT color="purple">String</FONT>, updated:<FONT color="purple">DateTime</FONT>, results:ReportData)
+     = {<FONT color="blue">get-report</FONT> <FONT color="brown">42</FONT>)
+  }
+  </PRE>
+
+</UL>
+
+<HR>
+<H3><A name="functional">Functional (prodedure-based) Programming</A></H3>
+
+<H4><A name="closure">Powerful functions</A></H4>
+
+The Curl language allows recursive function definition, such as the
+classic <CODE>factorial</CODE> example given in the <A
+href="curl.html#gui">main article</A>.  Procedures can be defined
+on-the-fly, sharing state with the environment 
+in which they 
+are defined.  In this section, we will show the use creation and use
+of a function factory that returns two procedures each time it is
+called. 
+
+Not only are procedures first-class (i.e., they can be passed around
+as ordinary data and kept in variables), but procedure types
+(signatures) are also first-class.  First we define a 
+<FONT color="purple"><CODE>Type</CODE></FONT> for procedure that takes
+no arguments but
+returns an <FONT color="purple"><CODE>int</CODE></FONT> each time it
+is called:
+
+<PRE>
+{let constant Counter:Type = {proc-type {}:int}}
+</PRE>
+
+Next we define a 
+<FONT color="purple"><CODE>Type</CODE></FONT> for procedure that
+take an <FONT color="purple"><CODE>int</CODE></FONT> as argument, but
+does not return anything:
+<PRE>
+{let constant Resetter:Type = {proc-type {int}:void}}
+</PRE>
+
+Our factory takes an initial value for the count and returns a 
+<FONT color="purple"><CODE>Counter</CODE></FONT> and a
+<FONT color="purple"><CODE>Resetter</CODE></FONT> 
+
+<PRE>
+{define-proc {make-counter count:int}:(Counter, Resetter)
+  {let the-resetter:Resetter =
+     {proc {new-count:int}:void
+        set count = new-count
+     }
+  }
+  {let the-counter:Counter = 
+     {proc {}:int
+        let old-value:int = count
+        set count = old-value + 1
+        {return old-value}
+     }
+  }
+  {return the-counter, the-resetter}
+}
+</PRE>
+
+Now we can make two sets of counters and resetters.
+<PRE>
+{let (counter-1:Counter, resetter-1:Resetter)
+   = {make-counter 0}
+}
+
+{let (counter-2:Counter, resetter-2:Resetter)
+   = {make-counter 100}
+}
+
+|| call the first counter
+{counter-1} || => 0     (returns the initial count)
+|| call it again
+{counter-1} || => 1     (the next count)
+|| call the other counter
+{counter-2} || => 100   (the other initial value)
+{counter-2} || => 101   (the next count)
+|| call the first conter again
+{counter-1} || => 2     (its next count was not affected)
+{resetter-1 10}         (reset the first counter)
+{counter-1} || => 10    (the new value)
+{counter-1} || => 11    (the next value)
+{counter-2} || => 102   (the other counter was never reset)
+</PRE>
+
+Some of this kind of state sharing (called closures) can be done with
+classes (or "inner classes" in some languages), but it is sometimes
+simpler to do it more directly.
+
+A common use for closures in the applets in the Curl content language
+is in event handlers for instances of common classes.  The 
+<FONT color="purple"><CODE>on</CODE></FONT> operator shown here is
+really creating a procedure that closes over the arguments of the 
+<FONT color="blue"><CODE>two-state-button</CODE></FONT> factory:
+
+<PRE>
+{define-proc {two-state-button 
+                 off-label:Visual,
+                 on-label:Visual
+             }:CommandButton
+    {return {CommandButton 
+                label = off-label,
+                {on Action at button:CommandButton do
+                    {if button.label == off-label
+                     then set button.label = on-label
+                     else set button.label = off-label
+                    }
+                }
+            }
+    }
+}
+
+{two-state-button "Off", "On"}
+{two-state-button "Pick me", "Picked"}
+</PRE>
+
+<H4><A name="top-level">top-level procedures (not associated with any class)</A></H4>
+       <LI>full closures (anonymous procedures with sharable state)
+       <LI>recursion
+<H4><A name="evaluate">direct programmatic evaluation of code</A></H4> 
+     <UL>
+       <LI>top-level expressions in a source file are executed: scripting
+       <LI>programs can call <code>evaluate</code> directly
+     </UL>
+
+<HR>
+<H3><A name="oop">Object-Oriented Programming</A></H3>
+    <UL>
+      <LI>fully-encapsulated, method-table style dispatching
+      <LI>multiple-inheritance
+      <LI>parameterized classes (generic types)
+      <LI>multiple constructors and factories
+      <LI>flexible state representation:
+        <UL>
+          <LI>acessors (methods that look syntactically like
+           variables)
+          <LI>sparse properties that can be set during
+           instantiation or after, but otherwise take up no space
+           because their values are computed as needed.
+        </UL>
+      <LI>dynamic or instance-specific state and methods:
+        <UL>
+          <LI>part-whole inheritance of property values (e.g, through
+            a parent instance)
+          <LI>event handlers that can be changed at run-time for an
+            instance (see closures)
+        </UL>
+ </UL>
+
+<HR>
+<H3><A name="other">Other Language Features</A></H3>
+<H4><A name="security">Modularity and Security</A>:</H4>
+<UL>
+  <LI>include
+  <LI>packages
+  <LI>access modifiers for bindings (e.g., for procedures, variables,
+     types, and class members)
+     <UL>
+       <LI>restrict access and visibility to a
+            package, to a class and subclasses, etc.
+       <LI>seal a class against subclassing (at all, or outside of the
+            package in which it is defined)
+     </UL>
+</UL>
+<H4><A name="gc">automatic memory management (garbage collection)</A></H4>
+
+<H4><A name="exceptions">try/catch style exception handling, with exceptions modeled as classes</A></H4>
+<H4><A name="iterators">programmer-extensible iterators</A></H4>
+
