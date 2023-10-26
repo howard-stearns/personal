@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html style="font-family: sans-serif">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <link rel="manifest" href="manifest.json">
+  </head>
+  <body>
+
+    <h3>Companion App</h3>
+
+    <p>version 1.0.0</p>
+
+    <p>
+      This demonstrates some technology towards having a companion app to another app:
+      <ol>
+	<li>An installable microapp for mobile AND desktop.</li>
+	<li>Which runs light-weight in background and gives an OS notification:
+	  <ol>
+	    <li>when friends are online - click to join them using the main app</li>
+	    <li>when a store you follow offers a sale - click to visit in marketplace</li>
+	  </ol>
+	</li>
+	<li>Install directly from our website OR from a button in the main app. (No appstore.)</li>
+	<li>No money transactions in main app - buy in this companion app instead - but after you buy it it can be used in the main app.</li>
+      </ol>
+
+    <p>
+      The following log reports what is happening:
+    </p>
+    <div id="logDisplay"></div>
+    <p>
+      <button>Try it!</button>
+    </p>
+    <p>
+      Note <b>browsers vary in how notifications are displayed</b>. E.g., Some dislay in a small popup in the upper or lower right of the screen, which then fades away. <b>Some Androids chime</b>, and then if I pull down from the top of the screen, I can see the notification.
+    </p>  
+    <p>
+      So far:
+      <ol>
+	<li>This version does not yet attempt to install as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">PWA</a>. (Just testing notifications on all platforms first.)</li>
+	<li>Notifications:
+	  <ol>
+	    <li>Not currently working on iOS Safari (which is strange, because it used to).</li>
+	    <li>Successfully tested on:
+	      <ol>
+		<li>OSX Chrome, Safari, Firefox</li>
+		<li>Windows Chrome, Firefox</li>
+		<li>Android Chrome</li>
+	      </ol>
+	    </li>
+	    <li>Not <i>yet</i> working on Edge (both Windows and OSX). Seems to never display permission request?</li>
+      </ol>
+    </p>  
+    <script>
+      function log(message) { // Log message to element named "logDisplay".
+      console.log(message);
+      // Use a fragment: browser will only render/reflow once.
+      var fragment = document.createDocumentFragment();
+      fragment.appendChild(document.createTextNode(message));
+      fragment.appendChild(document.createElement('br'));
+      document.querySelector("#logDisplay").appendChild(fragment);
+      }
+
+async function notifyMe() {
+  log('Button was pushed.');
+  if (!("Notification" in window)) return log("This browser does not support desktop notification!");
+  log(`Notification permission: ${Notification.permission}.`);
+  let permission = Notification.permission;
+  if (permission !== "granted") {
+    log(`Asking for permission.`);
+    permission = await Notification.requestPermission();
+  }
+  if (permission !== "granted") return log(`Permission is now ${permission}.`);
+
+  log(`Trying two different ways to issue notification: service worker and constructor.`);
+/*
+  try {
+    let registration = await navigator.serviceWorker.register('companionServiceWorker.js');
+    registration = await navigator.serviceWorker.ready;
+    log(`Service worker is registered.`);
+    let ignored = await registration.showNotification('Notification through ServiceWorker');
+    log(`Gave notification through service worker mechanism.`);
+  } catch (e) {
+    log(`Service worker mechanism failed with ${e.message || e}.`);
+  }
+*/
+  try {
+    const notification = new Notification("Notification through constructor");
+    if (!notification?.title) return log(`Notifcation constructor failed.`);
+    log(`Gave notification via contructor mechanism.`);
+  } catch (e) {
+    log(`Notification constructor mechanism failed with ${e.message || e}.`);
+  }
+}
+      document.querySelector('button').onclick = notifyMe;
+    </script>
+  </body>
+</html>
