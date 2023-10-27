@@ -24,7 +24,9 @@
 	<li>Install directly from our website OR from a button in the main app. (No appstore.)</li>
 	<li>No money transactions in main app - buy in this companion app instead - but after you buy it it can be used in the main app.</li>
       </ol>
-
+    </p>
+    <p>The app is a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">PWA</a> that must be installed. See below. You can try things out from this page here, without installing, and it will issue notifications just fine on many operating-system/browser combinations. But for the full experience, and to work on all operating systems (cough, iOS, cough), you have to install it.
+    </p>
     <p>
       The following log reports what is happening:
     </p>
@@ -32,26 +34,25 @@
     <p>
       <button>Try it!</button>
     </p>
+    <h3>Installation</h3>
     <p>
-      Note <b>browsers vary in how notifications are displayed</b>. E.g., Some dislay in a small popup in the upper or lower right of the screen, which then fades away. <b>Some Androids chime</b>, and then if I pull down from the top of the screen, I can see the notification.
-    </p>  
-    <p>
-      So far:
+      How this is done varies with different browsers:
       <ol>
-	<li>This version does not yet attempt to install as a <a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps">PWA</a>. (Just testing notifications on all platforms first.)</li>
-	<li>Notifications:
-	  <ol>
-	    <li>Not currently working on iOS Safari (which is strange, because it used to).</li>
-	    <li>Successfully tested on:
-	      <ol>
-		<li>OSX Chrome, Safari, Firefox</li>
-		<li>Windows Chrome, Firefox</li>
-		<li>Android Chrome</li>
-	      </ol>
-	    </li>
-	    <li>Not <i>yet</i> working on Edge (both Windows and OSX). Seems to never display permission request?</li>
+	<li>iOS: Touch the sharing button at the bottom of the browser:
+	  <p><img src="ios-sharing.png" width="300px"></img></p>
+	  <p>...and then scroll down to "Add to home screen":</p>
+	  <p><img src="ios-add-to-home-screen.png" width="300px"></img></p>
+	</li>
+	<li>Android: touch the "more" button at the upper right of the screen:
+	  <p><img src="android-more.png" width="300px"></img></p>
+	  <p>...and then scroll down to "Install app":</p>
+	  <p><img src="android-install-app.png" width="300px"></img><p>
+	</li>
+	<li>Desktop Chrome (Windows or OSX): There is a tiny install icon on the right side of the address bar:
+	  <p><img src="chrome-pwa-install-button.png" width="300px"></img></p>
+	</li>
       </ol>
-    </p>  
+    </p>
     <script>
       function log(message) { // Log message to element named "logDisplay".
       console.log(message);
