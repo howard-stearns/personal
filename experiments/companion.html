@@ -74,7 +74,7 @@ async function notifyMe() {
   if (permission !== "granted") return log(`Permission is now ${permission}.`);
 
   log(`Trying two different ways to issue notification: service worker and constructor.`);
-/*
+
   try {
     let registration = await navigator.serviceWorker.register('companionServiceWorker.js');
     registration = await navigator.serviceWorker.ready;
@@ -84,7 +84,7 @@ async function notifyMe() {
   } catch (e) {
     log(`Service worker mechanism failed with ${e.message || e}.`);
   }
-*/
+
   try {
     const notification = new Notification("Notification through constructor");
     if (!notification?.title) return log(`Notifcation constructor failed.`);

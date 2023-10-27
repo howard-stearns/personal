@@ -6,8 +6,13 @@
   "description": "A test of the concept of a companion app that issues notifications",
   "icons": [
     {
-      "src": "generic-icon.png",
+      "src": "generic-icon-48.png",
       "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "generic-icon-144.png",
+      "sizes": "144x144",
       "type": "image/png"
     }
   ]
