@@ -13,15 +13,15 @@ const Storage = {
 
     let item = path(resourceTag, ownerTag);
     if (!string) {
-      return delete data[item];
+      return delete this.data[item];
     }
-    return data[item] = string;
+    return this.data[item] = string;
   },
 
   async retrieve(resourceTag, ownerTag) {
     let item = path(resourceTag, ownerTag)
-    return data[item];
+    return this.data[item];
   },
-  data = {}
+  data: {}
 };
 export default Storage;

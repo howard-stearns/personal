@@ -55,12 +55,12 @@
       await Security.ready;            // And wait for Security to initialize.
 
       const thisDeviceTag = await Security.create();
-      localStorage.setItem('yourTag', yourTag.textContent = await Security.create(thisDeviceTag));
+      yourTag.textContent = await Security.create(thisDeviceTag);
 
       // You can use any tag that your device is a member of.
       // So to make "someone else's tag", it starts the same as above...
       const otherDeviceTag = await Security.create();
-      localStorage.setItem('theirTag', theirTag.textContent = await Security.create(otherDeviceTag));
+      theirTag.textContent = await Security.create(otherDeviceTag);
       // Then destroy the device tag that we temporarilly owned (which we have permission for until destroyed):
       await Security.destroy(otherDeviceTag);
 
