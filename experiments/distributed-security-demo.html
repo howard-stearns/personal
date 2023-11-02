@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html style="font-family: sans-serif">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <style>
+      h1, h2 {text-align: center;}
+      p {overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;}
+      textarea {width: 100%;}
+    </style>
+  </head>
+  <body>
+    <h1><a href="https://github.com/kilroy-code/distributed-security">Distributed Security</a></h1>
+    <h2>Demo</h2>
+
+    <p><input type="radio" name="use" id="useOurs" checked /> your tag: <span id="yourTag">(generating...)</span></p>
+    <p><input type="radio" name="use"/> some else's tag: <span id="theirTag">(generating...)</span></p>    
+    
+    <textarea id="message">Your message here.</textarea>
+
+    <hr>
+    <p style="white-space:normal;"><button id="encrypt" disabled>encrypt</button> Note that it changes each time.
+      Also, you can encrypt for someone else, but cannot decrypt it without the private key.</p>
+    <p>encrypted: <span id="encrypted">(text will appear when you click "encrypt")</span></p>
+    <p>decrypted: <span id="decrypted">(text will appear when you click "encrypt")</span></p>
+
+    <hr>
+    <p><button id="sign" disabled>sign</button></p>
+    <p>signature: <span id="signature">(signature will appear when you click "sign")</span></p>
+    <p>verified: <span id="verified">(verification will appear when you click "sign")</span></p>
+
+    <hr>
+    
+    <script>
+      async function setText(element, promisedText) {
+	return promisedText.then(
+          result => {
+	    element.textContent = result;
+	    element.style.color = 'black';
+	  },
+	  error => {
+	    element.textContent = error.message;
+	    element.style.color = 'red';
+	  });
+      }
+      function selectedTag() { return useOurs.checked ? yourTag.textContent : theirTag.textContent; }
+    </script>
+
+
+    <script type="module">
+      //import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
+      import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs";      
+      import Cloud from "./cloud.mjs"; // A simple browser-local "cloud" for this demo.
+      Security.Storage = Cloud;        // Give it to Security.
+      await Security.ready;            // And wait for Security to initialize.
+
+      const thisDeviceTag = await Security.create();
+      localStorage.setItem('yourTag', yourTag.textContent = await Security.create(thisDeviceTag));
+
+      // You can use any tag that your device is a member of.
+      // So to make "someone else's tag", it starts the same as above...
+      const otherDeviceTag = await Security.create();
+      localStorage.setItem('theirTag', theirTag.textContent = await Security.create(otherDeviceTag));
+      // Then destroy the device tag that we temporarilly owned (which we have permission for until destroyed):
+      await Security.destroy(otherDeviceTag);
+
+      [encrypt, sign].forEach(button => button.removeAttribute('disabled'));
+      encrypt.onclick = async function () {
+	await setText(encrypted, Security.encrypt(selectedTag(), message.value));
+	await setText(decrypted, Security.decrypt(selectedTag(), encrypted.textContent));
+      };
+      sign.onclick = async function () {
+	const tag = useOurs.checked ? yourTag.textContent : theirTag.textContent;
+	await setText(signature, Security.sign(selectedTag(), message.value));
+	await setText(verified, Security.verify(selectedTag(), signature.textContent, message.value));
+      };
+    </script>
+  </body>
+</html>
