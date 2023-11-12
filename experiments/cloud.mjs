@@ -1,5 +1,6 @@
 // Using some of the guts of Distributed Security because it's convenient for the authorization checks.
-import Security from "https://kilroy-code.github.io/distributed-security/lib/security.mjs";
+//fixme import Security from "https://kilroy-code.github.io/distributed-security/lib/security.mjs";
+import Security from "http://localhost:3000/@kilroy-code/distributed-security/lib/security.mjs";
 
 function path(resourceTag, ownerTag) {
   return resourceTag + '/' + ownerTag;
@@ -13,15 +14,14 @@ const Storage = {
 
     let item = path(resourceTag, ownerTag);
     if (!string) {
-      return delete this.data[item];
+      return localStorage.removeItem(item);
     }
-    return this.data[item] = string;
+    return localStorage.setItem(item, string);
   },
 
   async retrieve(resourceTag, ownerTag) {
     let item = path(resourceTag, ownerTag)
-    return this.data[item];
+    return localStorage.getItem(item);
   },
-  data: {}
 };
 export default Storage;
