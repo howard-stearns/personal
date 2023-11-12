@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html style="font-family: sans-serif">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
+    <style>
+      h1, h2 {text-align: center;}
+      p.result {overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;}
+      input[name="spacer"] {visibility: hidden;}
+      :root {--revealed: none; --prompting: none;}
+      .reveal {display: var(--revealed);}
+      .prompt {display: var(--prompting); background: lightblue; border: thick solid red;}
+      textarea {width: 100%;}
+    </style>
+  </head>
+  <body>
+    <h1><a href="https://github.com/kilroy-code/distributed-security">Distributed Security</a></h1>
+    <h2>Demo</h2>
+    <p>This sandbox lets you interactively explore
+      <ul>
+	<li>various aspects of cryptography (Part I),</li>
+	<li>and key management using Distributed Security (Part II).</li>
+      </ul>
+      Please do also explore the code!</p>
+
+    <hr><hr>
+    <h3>Part I. Encryption Basics</h3>
+    <p class="result"><input type="radio" name="use" id="useOurs" checked /> your tag: <span id="yourTag">(generating...)</span></p>
+    <p class="result reveal"><input type="radio" name="spacer"> device <span id="device"></span> tag: <span class="yourDeviceTag"></span></p>
+    <p class="result"><input type="radio" name="use"/> some else's tag: <span id="theirTag">(generating...)</span></p>
+    <p class="result reveal"><input type="radio" name="spacer"/> other user's device tag: <span id="theirDeviceTag"></span></p>
+    <p class="prompt">Add device <span id="askingLabel"></span> to your tag? <button id="addIt">yes</button> <button id="ignoreIt">no</button></p>
+    <textarea id="message">Your message here.</textarea>
+
+    <hr>
+    <p>1. Anyone can encrypt content that will then only be readable by the individual or team for which it is encrypted. It is encrypted in your browser and decrypted in the intended indvidual or team's browser, with no one else able to read it. No login or central authority is involved.</p>
+    <p><button id="encrypt" disabled>encrypt</button> Note that the encrypted text changes each time you click the "encrypt" button, so that the encrypted text cannot be matched up with previous messages. There is no way to tell who encrypted it.</p>
+    <p class="result">encrypted: <span id="encrypted" contenteditable="true"></span></p>
+    <p class="result">decrypted: <span id="decrypted"></span></p>
+    <p>Try editing the encrypted text.</p>
+    <p>You can encrypt for someone else's tag (radio button, above), but cannot decrypt the result since you don't have the other tag's key. Therefore, encrypted content can be stored publically with no login or read permissions, and yet still be only readable by the intended individual or team.</p>
+
+    <hr>
+    <p>2. An individual or team can sign a request, action or transaction, message or content. Anyone can then verify whether the content was definitely prepared by the tag holder and only by the tag holder, and not altered since signing. All without login or central authority.</p>
+    <p><button id="sign" disabled>sign</button></p>
+    <p class="result">signature: <span id="signature" contenteditable="true"></span></p>
+    <p class="result">verified: <span id="verified"></span></p>
+
+    <hr><hr>
+    <h3>Part II. Key Management</h3>
+    <p>1. <button id="showDeviceTags" disabled>show device tags</button> Each of the tags we've seen so far are for individuals and teams, and
+      are stored in the cloud. They are encrypted using a device key that is kept in a vault in this browser and which never leaves the vault
+      at all. (Not even encrypted.) Click "show devices" to show the tags for these keys at the top of the page, which will be used below. </p>
+
+    <hr>
+    <p>1. <button id="forgetMe" disabled>forget me</button>
+      <span id="forgottenText">This button removes your tag from the cloud.</span></p>
+
+    <hr>
+    <p>2. <button id="addDevice" disabled>add device</button> In this demo, the "cloud" is really just in this
+      browser. You can run this demo in other tabs of this browser and it will use the same demo "cloud" with the same tags, but
+      it will not use the same tags in other browsers or other computers.</p>
+    <p>You can still exercise the "add device" functionality in this browser. Notice this browser tab is titled <span id="title"/>.
+      Click the "add device" button to open a new tab that acts like a different device for the same user tag. It will ask on this
+      tab (with your current keys) for you to give permission to add that device for this user.</p>
+    
+    <script>
+      /***  Behavior that is specific to this demo, involving display elements and persistence. ***/
+      
+      // In this demo, we treat each tab as a unique device.
+      // Derive counter from label when present, or from storage, or 0.
+      let deviceLabel = location.hash.slice(1),
+	  codeA = "A".charCodeAt(0),
+	  tabCounter = deviceLabel ? deviceLabel.charCodeAt(0) - codeA : parseInt(localStorage.getItem('tabCounter') || "0");
+      deviceLabel = String.fromCharCode(tabCounter + codeA);
+      tabCounter = (tabCounter+1) % 26; // "26 tabs ought to be enough for anyone."
+      localStorage.setItem('tabCounter', tabCounter);
+      location.hash = device.textContent = deviceLabel;
+      document.title = title.textContent = 'Device ' + deviceLabel;
+      document.querySelector('.yourDeviceTag').id = deviceLabel; // Make things uniform for the following.
+
+      function setGood(element) { // Return a function to set an element with a good result.
+	return function (result) {
+	  element.textContent = result;
+	  element.style.color = 'darkgreen';
+	}
+      }
+      function setBad(element) {
+	return function (error) { // Return a function to set an element with a bad result.
+	  element.textContent = error.message;
+	  element.style.color = 'red';
+	}
+      }	
+      async function setText(element, promisedText) { // Set element text from a promise that may resolve or reject.
+	return promisedText.then(setGood(element), setBad(element));
+      }
+
+      async function displayTag(name, producer) { // generate if ncessary and persist, and set display
+	let tag = localStorage.getItem(name),
+	    element = document.getElementById(name),
+	    setDisplay = setGood(element);
+	if (!tag) {
+	  tag = await producer();
+	  localStorage.setItem(name, tag);
+	}
+	setDisplay(tag);
+	return tag;
+      }
+
+      // Muck with a CSS property to reveal or hide extra info. (Too distracting to show when starting out.)
+      function muck(property, on) { document.documentElement.style.setProperty(property, on ? 'block' : 'none'); }
+      function revealDeviceTags(on = true) { muck('--revealed', on); }
+      function revealPrompt(on = true) { muck('--prompting', on); }
+
+      let channel = new BroadcastChannel("demo");
+    </script>
+
+
+    <script type="module">
+      /*** Every Security app must: provide a cloud; create tags; encrypt/decrypt/sign/verify to taste; allow user to add/remove devices. ***/
+      //fixme import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
+      import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs";
+      import Cloud from "./cloud.mjs"; // A simple browser-local "cloud" for this demo.
+      Security.Storage = Cloud;        // Give it to Security.
+      Security.getUserDeviceSecret = () => deviceLabel;
+      await Security.ready;            // And wait for Security to initialize.
+      window.Security = Security;
+
+      async function checkAvailability(name) { // If the tag in the specified element isn't available, update the element display with the error message.
+	let element = document.getElementById(name),
+	    tag = element.textContent,
+	    setDisplay = setBad(element);
+	return await Security.encrypt(tag, 'dummy message that will fail to encrypt if tag is missing').catch(setDisplay);
+      }
+
+      let theirDeviceTag = await displayTag('theirDeviceTag', function () { return Security.create(); }),
+	  theirTag = await displayTag('theirTag',       function () { return Security.create(theirDeviceTag); });
+
+      let isDeviceNew = false, isTagNew = false;
+      let yourDeviceTag = await displayTag(deviceLabel, function () { isDeviceNew = true; return Security.create(); }), // deviceLabel is "A", "B", etc., above.
+	  yourTag = await displayTag('yourTag', function () { isTagNew = true; return Security.create(yourDeviceTag); });
+
+      // Someone else's tag is any for which you do not have the device tag. We DID have it when we created it, so destory it now.
+      await Security.destroy(theirDeviceTag).catch(function (ignore) { return null; });
+      await checkAvailability('theirDeviceTag');
+      if (isDeviceNew && !isTagNew) channel.postMessage({label:deviceLabel, tag:yourDeviceTag}); // Ask other tabs to add our device.
+      [encrypt, sign, forgetMe, showDeviceTags, addDevice].forEach(function (button) { button.removeAttribute('disabled'); });
+
+      function selectedTag() { // Return the appropriate tag based on the radio buttons.
+	return useOurs.checked ? yourTag : theirTag;
+      }
+      encrypt.onclick = async function () { // Encrypt the message, decrypt it, and show both results.
+	await setText(encrypted, Security.encrypt(selectedTag(), message.value));
+	await encrypted.oninput();
+      };
+      // The browser fires oninput automatically if you edit the element.
+      encrypted.oninput = async function () { // Decrypt the current contents of encrypted.
+	await setText(decrypted, Security.decrypt(selectedTag(), encrypted.textContent));
+      };
+      sign.onclick = async function () { // Sign the message, verify the signature, and show both results.
+	await setText(signature, Security.sign(selectedTag(), message.value));
+	await signature.oninput();
+      }
+      signature.oninput = async function () { // Verify the current contents of signature against message.
+	await setText(verified, Security.verify(selectedTag(), signature.textContent, message.value));
+      };
+
+      showDeviceTags.onclick = revealDeviceTags; // Just show tags, which are safe to show. The keys never leave the vault.
+      forgetMe.onclick = async function () { // Remove this tag from the cloud.
+	await Security.destroy(yourTag, {recursiveMembers: true});
+	checkAvailability('yourTag');   localStorage.removeItem('yourTag');
+	checkAvailability(deviceLabel); localStorage.removeItem(deviceLabel);
+	useOurs.checked = true;
+	forgottenText.textContent = "Now try to encrypt or sign with your old tag. Compare the results with \"someone else's tag\", which exists in the cloud, but is not yours. Then reload the page to make a new tag for yourself.";
+      };
+      addDevice.onclick = function () { // Add a new tab with its own device tag.
+	open(new URL("#", location.href).href); // Open a new brower on the same url, but with an empty hash. It will use the next device name.
+      };
+      channel.onmessage = function (event) { // The UX for this is up to the application.
+	let {label, tag, close} = event.data;
+	if (close) return ignoreIt.onclick();
+	askingLabel.textContent = label;
+	revealPrompt();
+	addIt.onclick = function () {
+	  Security.changeMembership(yourTag, {add: [tag]})
+	    .then(function () { channel.postMessage({close: true}); }, // Tell any other device they can close the prompt.
+		  function (error) { alert(error.message); });
+	  revealPrompt(false);
+	};
+      }
+      ignoreIt.onclick = function () { revealPrompt(false); };
+    </script>
+  </body>
+</html>
