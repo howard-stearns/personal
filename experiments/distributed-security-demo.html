@@ -4,125 +4,99 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="initial-scale=1, viewport-fit=cover">
     <style>
-      h1, h2 {text-align: center;}
+      h1, .centered {text-align: center;}
       textarea {width: 100%;}
-      p.result {overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;}
+      result {overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;}
       input[name="spacer"] {visibility: hidden;}
-      :root {--revealed:none; --signed:none; --encrypted:none; --persona:none; --adding:none; --recovery:none; }
-      .reveal {display: var(--revealed);}
-      .signed {display: var(--signed);}
-      .encrypted {display: var(--encrypted);}
-      .persona {display: var(--persona);}
-      .adding {display: var(--adding);}
-      .recovery {display: var(--recovery);}
-      /* text toggle */
-      .toggle input:checked + span:before { content: '\0021E7' }
-      .toggle input:not(:checked) + span:before { content: '\002048' } /*'\002139'*/
-      .toggle input { display: none; }
-      .toggle { color: blue; font-weight: bold; }
+      result {display: block;}
+      result:not([id]) {color: grey; margin-top: 10px;}
+      tag, message, signature, verified, encrypted, decrypted {display: inline-block; width:20vw; overflow-x: inherit; text-overflow: inherit; vertical-align: middle; text-align: center;}
+      result[id="decrypt"] message, result[id="verify"] verified {font-weight: bold; }
+      .hidden {visibility: hidden;}
+
     </style>
   </head>
   <body>
-    <h1><a href="https://github.com/kilroy-code/distributed-security">Distributed Security</a></h1>
-    <h2>Demo</h2>
-    <h3>Part I. Cryptography Basics</h3>
-    <p class="reveal result"><span style="color:blue;">&ShortDownArrow;</span> devices included in your persona</p>
-    <p class="result">
-      <input type="checkbox" class="reveal" checked/>
-      <label><input type="radio" name="use" value="thisDevice" checked /> This device tag:</label>
-      <span id="thisDevice" contenteditable>(generating...)</span>
-    </p>
-    <p class="result">
-      <input type="checkbox" class="reveal"/>
-      <label><input type="radio" name="use" value="thatDevice"/> Another computer tag:</label>
-      <span id="thatDevice">(generating...)</span>
-    </p>    
-    <textarea id="message">Your message here.</textarea>
+    <h1>Distributed Security</h1>
+    <p class="centered">an <i>interactive demo</i> of the <a href="https://github.com/kilroy-code/distributed-security">our library</a>, including the <b>four basic cryptographic operations</b>, and of our approach to <b>key management</b></p>
+    <p class="centered">What you <i>do</i> with it, and what <i>your user interface is</i>, is up to the application that you build.</p>
+    <h2>Part I. Cryptography Basics</h2>
+    <result id="thisDevice">
+      <label><input type="radio" name="use" value="thisDeviceTag" checked /> Your personal device <i>tag</i> in this browser:</label> <!-- fixme: do we need value= any more? -->
+      <tag>(generating...)</tag> <!-- fixme: make tag part of label. Problem is that when we make a var for each result sub element, we don't yet go two deep. -->
+    </result>
+    <p><textarea id="message">The message you type here will be encrypted or signed using the buttons below.</textarea></p>
 
+    <result>encrypt(<tag><b><i>anyone's</i></b> tag</tag>, <message>message</message>) = <encrypted>encrypted</encrypted></result>
+    <result id="encrypt" class="hidden">encrypt(<tag contenteditable></tag>, <message contenteditable></message>) = <encrypted></encrypted></result>
+    <result>decrypt(<tag><b><i>your</i></b> tag</tag>, <encrypted>encrypted</encrypted>) = <b><message>message</message></b></result>
+    <result id="decrypt" class="hidden">decrypt(<tag contenteditable></tag>, <encrypted contenteditable></encrypted>) = <message></message></result>
+    <p><button id="encryptDecrypt" disabled>encrypt</button> </p>
     <hr/>
-    <p class="result">1. <button id="sign" disabled>sign</button> signature: <span id="signature" contenteditable></span></p>
-    <p class="result"> <label class="toggle"><input type="checkbox" onclick="toggle('--signed')"/><span/></label> verified: <span id="verified"></span> </p>
-    <p class="signed">You can only sign with a tag you have access to on your computer. But <i>anyone can then verify</i> a given tag/message/signature combination.</p>
-    <ul class="signed">
-      <li>Any change to the message, signature, or tag will cause verification to fail. Try it! (You can always <button onclick="navigation.reload()">reload</button>.)</li>
-      <li>You cannot sign with a tag you don't have. Try re-signing with the tag from another computer. (Click "Another computer tag" and then "sign".)</li>
-    </ul>
-    <p class="signed"><b>Why it matters:</b> Without any login or central authority, users can sign a message that can be verified by anyone as coming from that tag and only from that tag. The message might be:</p>
-    <ul class="signed">
-      <li>a specified post</li>
-      <li>a request to store or modify something with specified new content</li>
-      <li>a specified transaction</li>
-      <li>an attestation as to the truth, existence, or conformance of some specified fact</li>
-    </ul>
+    
+    
+    <result>sign(<tag><b><i>your</i></b> tag</tag>, <message>message</message>) = <signature>signature</signature></result>
+    <result id="sign" class="hidden">sign(<tag contenteditable></tag>, <message contenteditable></message>) = <signature></signature></result>
+    <result>verify(<tag><b><i>anyone's</i></b> tag</tag>, <signature>signature</signature>, <message>message</message>) = <b><verified>verified</verified></b></result>
+    <result id="verify" class="hidden">verify(<tag contenteditable></tag>, <signature contenteditable></signature>, <message contenteditable></message>) = <verified></verified></result>
+    <p> <button id="signVerify" disabled>sign</button> </p>
+    <hr/>
 
+    <result id="thatDevice">
+      <label><input type="radio" name="use" value="thatDeviceTag"/> A device tag from a different computer:</label>
+      <tag>(generating...)</tag>
+    </result>
     <hr/>
-    <p class="result">2. <button id="encrypt" disabled>encrypt</button> encrypted: <span id="encrypted" contenteditable></span></p>
-    <p class="result"> <label class="toggle"><input type="checkbox" onclick="toggle('--encrypted')"/><span/></label> decrypted: <span id="decrypted"></span></p>
-    <p class="encrypted"><i>Anyone can encrypt</i> a message so that only someone with the specified tag can then read it. (This is the opposite of signing as to who takes the first step.)</p>
-    <ul class="encrypted">
-      <li>A change to the enryption or tag will cause the decryption to fail. Try it!</li>
-      <li>You <i>can</i> encrypt for a tag you don't have. Try re-encrypting with the tag from another computer. The encryption will work, but ony someone with the specified tag can decrypt it.</li>
-    </ul>
-    <p class="encrypted"><b>Why it matters:</b> Without any login or centralized access control permissions, users can encrypt content that can be sent in the open and stored anywhere, but only the intended party can read it. (Not even the makers of the software, the site storing the data, or someone who legally or illegally gains access to the stored data.)</p>
 
-    <hr/>
     <hr/>    
-    <h3>Part II. Key Management</h3>
-    <p>1. <button id="persona" disabled>create persona from this device</button></p>
-    <p class="result">
-      <label class="toggle"><input type="checkbox" onclick="toggle('--persona')"/><span/></label> 
-      <label><input type="radio" name="use" value="yourPersona" /> Your persona:</label> <span id="yourPersona" contenteditable></span>
-    </p>
-    <p class="persona">Behind each tag is a set of cryptographic keys that drive the math. If you lose the keys, you lose the ability to sign or decrypt, and if someone else gets your keys, they could sign or decrypt your stuff.</p>
-    <p class="persona">It would be neither convenient nor secure to have to copy device keys from one computer to another. Instead, we create another set of keys to represent a <i>persona</i>:</p>
-    <ul class="persona">
-      <li>Each set of device keys is securely kept only in a vault on the computer on which they are generated, and they cannot be copied anywhere.</li>
-      <li>The persona keys are <i>encrypted</i> by the device keys and <i>stored in the cloud</i>, where they are available to any of your devices, but to no one else.</li>
-      <li>The only thing that the device tags are used for is to encrypt and decrypt the persona keys that they have been added to. Applications use only the persona tags. (In this demo, you can switch back an forth between the various tags shown, and show that they all work the same way for cryptography.)</li>
-      <li>An application might make just one persona for you that is different than personas for other applications, or several applications could use the same opt-in persona, or applications could invite you to make multiple personas for different purposes. In this demo, you can create and destroy one persona at a time. Try out the various operations using the new or destroyed persona tag.</li>
-    </ul>
-    <p class="persona"><b>Why it matters:</b> A persona - or multiple personas -- allows you to have an identity that you can use across all your devices.</p>
-    <hr/>
-    <p>
-      <label class="toggle"><input type="checkbox" onclick="toggle('--adding')"/><span/></label> 
-      2. If you have created a persona, you can use the checkboxes at the top to add or remove devices from your persona. Remember that you can "forget persona" and create a new one.
-    </p>
-    <p class="adding">If the device tag on your browser is part of your persona, then you can add or remove other devices. E.g., you (nor someone else) can change the devices for <i>your</i> persona without already being authorized.</p>
-    <p class="adding"><b>Why it matters:</b> Each device acts as a backup that allows you to add/remove other devices, so there is no need for <i>anyone</i> to have a custodial copy of your unencrypted keys.</p>
-    <hr/>
-    <p>
-      <label class="toggle"><input type="checkbox" onclick="toggle('--recovery')"/><span/></label> 
-      3. <button id="recovery" disabled>TBD: add recovery questions</button>
-    </p>
-    <p class="recovery">This section isn't implemented yet, but will allow the user to add or remove security questions to the persona, which act like virtual devices that can be added without adding a physical device vault. Answering a question (or pair of questions, or tripple of questions, ...) unlocks the persona, so that further changes can be made (such as adding a new device or removing one that you no longer have access to).</p>
-    <p class="recovery"><b>Why it matters:</b> Even if you lose access to all your devices, the security questions can be used to add a new device (or to have the cloud permanently forget your persona).</p>
-    <hr/>
-    <p>
-      4. Not shown in this demo: Just as you can create a persona and add/remove device tags for it, you can create a <i>team</i> and add/remove persona tags for it.
-    </p>
-    <p><b>Why it matters:</b> This allows arbitrary groups of individuals to act as a single entity - signing a message, or decrypting a message that was encrypted for the whole team (and no one else) to read.</p>
+    <h2>Part II. Key Management</h2>
+    <div id="teamDisplays"></div>
+    <template id="team">
+      <div>
+	<result>
+          <label><input type="radio" name="use"/>team tag: </label>
+          <tag>(generating...)</tag>  <button>add selected tag as member</button>
+          <message></message>
+        </result>
+	<members></members>
+	<hr/>
+      </div>
+    </template>
+    <template id="member"> <!-- fixme: make these be hanging indents -->
+      <result><button>remove member:</button> <tag></tag></result>
+    </template>
       
+    <p>
+      <button id="createTeam" disabled>create team from selected tag</button>
+      <button id="destroyTag">forget selected tag</button>
+      <button id="destroyEverything">forget everything and start over</button>
+    </p>
+
 
     <script>
+      if (document.body.clientWidth < 600) screen.orientation.lock('landscape');
       var demoSecret = 'thisDevice'; // What should be returned by Security.getUserDeviceSecret in this app.
       function setGood(element) { // Return a function to set an element with a good result.
 	return function (text) {
 	  element.textContent = text;
 	  element.style.color = 'darkgreen';
+          return true;
 	}
       }
       function setBad(element) { // Return a function to set an element with a bad result.
 	return function (errorOrText) {
 	  element.textContent =  errorOrText?.message || errorOrText;
 	  element.style.color = 'red';
+          return false;
 	}
       }	
-      async function setText(element, promisedText, errorTextOverride = '') { // Set element text from a promise that may resolve or reject.
-	return promisedText.then(setGood(element), setBad(element, errorTextOverride));
+      async function setText(element, promisedText) { // Set element text and answer true from a promise that may resolve (or not be a thenable) or reject.
+	if (!promisedText.then) return setGood(element)(promisedText);
+	return promisedText.then(setGood(element), setBad(element));
       }
-      async function displayTag(name, producer) { // generate if ncessary and persist, and set display
+      async function displayTag(name, producer) { // generate if necessary using producer()=>promise(string) and persist, and set display
 	let tag = localStorage.getItem(name),
-	    element = document.getElementById(name),
+	    element = window[name],
 	    setDisplay = setGood(element);
 	if (!tag) {
 	  tag = await producer();
@@ -133,17 +107,48 @@
       }
       function selectedTagElement() { // Return the tag display that is selected by radio buttons.
         let checkedRadio = document.querySelector('input[name = "use"]:checked');
-	return document.getElementById(checkedRadio.value);
+	return checkedRadio.parentElement.parentElement.querySelector('tag');
       }
       function getTag() { return selectedTagElement().textContent; }  // Return selected tag
-      // Muck with a CSS property to reveal or hide extra info. (Too distracting to show when starting out.)
-      function muck(property, on = true) { document.documentElement.style.setProperty(property, on ? 'inline-block' : 'none'); }
-      function toggle(property) { muck(property, event.target.checked); }
+      var teams = [];
+      // Subtle syntactic sugar hack: The browser arranges for there to be a variable for each element with an id.
+      // Here we ALSO define a variable someIdTagname for each child element of a result with id="someId".
+      // e.g., <result id="encrypt">encrypt(<tag/>, <message/>) = <encrypted/></result>
+      // defines encryptTag, encryptMessage, and encryptEncrypted corresponding to the child elements.	
+      function capitalize(string) { return string[0].toUpperCase() + string.slice(1).toLowerCase(); }
+      document.querySelectorAll('result').forEach(group => {
+	if (!group.id) return;
+	Array.prototype.forEach.call(group.children, element => {
+	  window[group.id + capitalize(element.tagName)] = element;
+	});
+      });
+      async function addTeamDisplay(teamPromise, memberTags) { // Add an updated team display to the bottom of the teams.
+	let teamDisplay = team.content.cloneNode(true),
+	    tagDisplay = teamDisplay.querySelector('tag'),
+	    button = teamDisplay.querySelector('button'),
+	    radio = teamDisplay.querySelector('[name="use"]'),
+	    membersDisplay = teamDisplay.querySelector('members');
+	teamDisplays.append(teamDisplay);
+	memberTags.forEach(async memberTag => await addMemberDisplay(memberTag, membersDisplay));
+	button.onclick = _ => addMember(memberTags, membersDisplay);
+	await setText(tagDisplay, checkTagYours(await teamPromise));
+	radio.onchange = maybeRedo;
+	radio.checked = true;
+	radio.onchange();
+      };
+      async function addMemberDisplay(tag, membersDisplay) { // Add an updated member display to the bottom of the given team membersDisplay.
+	let memberDisplay = member.content.cloneNode(true),
+	    tagDisplay = memberDisplay.querySelector('tag'),
+	    button = memberDisplay.querySelector('button');
+	button.onclick = removeMember;
+	membersDisplay.append(memberDisplay);
+	await setText(tagDisplay, checkTagYours(tag));
+      }
     </script>
 
     <script type="module">
-      import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
-      //import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs";
+      //import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
+      import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs"; window.Security = Security;
       import Cloud from "./cloud.mjs"; // A simple browser-local "cloud" for this demo.
 
       // Applications must give Security an implementation of cloud storage and a secret.
@@ -153,96 +158,132 @@
       // For security, it should be different for different users and for different devices.
       Security.getUserDeviceSecret = () => demoSecret;
 
-      await Security.ready;            // And wait for Security to initialize.
-      window.Security = Security; // FIXME remove
+      await Security.ready;            // Wait for Security to initialize.
 
-      async function getCheckedTag(element = selectedTagElement()) { // Return the specified tag.
-	// And for demo purposes, color it to show whether it is valid (e.g., after editing).
-	let tag = element.textContent;
-	Security.sign(tag, "dummy message that will fail to sign if we don't have key")
-          .then(() => setGood(element)(tag),
-		() => setBad(element)(tag));
-	return tag;
+      function checkTagValid(tag) { // Promise tag if it is any tag known to this cloud, else reject tag.
+	return Security.encrypt(tag, "dummy message that will reject encrypting if not a tag at all (one level deep)")
+	  .then(function (ignored) { return tag; })
+	  .catch(function (ignored) { return Promise.reject(tag); });
+      }
+      function checkTagYours(tag) { // Promise tag if it belongs to user, else reject tag.
+	return Security.sign(tag, "dummy message that will reject signing if tag is recursively not available to this device")
+	  .then(function (ignored) { return tag; })
+	  .catch(function (ignored) { return Promise.reject(tag); });
       }
 
-      await displayTag('thisDevice', function () { return Security.create(); })
+      // Create a tag recognized on this device, and another real tag that is NOT recognized on this device.
+      await displayTag('thisDeviceTag', function () { return Security.create(); })
       demoSecret = 'thatDevice'; // Emulate another device by changing the secret while creating another tag...
-      await displayTag('thatDevice', function () { return Security.create(); })
+      await displayTag('thatDeviceTag', function () { return Security.create(); })
       demoSecret = 'thisDevice'; // ... and change it back so the temporary value is no longer accessible to us.
-      await getCheckedTag(thatDevice); // Show by side-effect that we cannot use it.
-      [sign, encrypt, persona].forEach(function (button) { button.disabled = false; });
+      await setText(thatDeviceTag, checkTagYours(thatDeviceTag.textContent)); // Show by side-effect that we cannot use it.
+      // With tags now defined, enable the buttons that use them.
+      [signVerify, encryptDecrypt, createTeam].forEach(function (button) { button.disabled = false; });
 
-      function maybeRedo() { 
-	if (verified.textContent) signature.oninput();
-	if (encrypted.textContent) encrypted.oninput();
+      function maybeRedo() {
+	if (verifyVerified.textContent) signVerify.onclick();
+	if (encryptEncrypted.textContent) encryptDecrypt.onclick();
       }
-      thisDevice.oninput = yourPersona.oninput = () => {
-	getCheckedTag();
-	maybeRedo();
-      };
       document.querySelectorAll('input[name = "use"').forEach(function (radio) { radio.onchange = maybeRedo; });
-      message.oninput = function ()  {
-	if (verified.textContent) signature.oninput();
-      };
-      sign.onclick = async function () { // Sign the message, verify the signature, and show both results.
-	await setText(signature, Security.sign(getTag(), message.value));
-        await signature.oninput();
-      };
-      signature.oninput = async function () { // Verify the current contents of signature against message.
-	await setText(verified, Security.verify(getTag(), signature.textContent, message.value));
+      function checkAllTeams() {
+        teamDisplays.querySelectorAll('tag').forEach(tagElement => setText(tagElement, checkTagYours(tagElement.textContent)));
       }
-      encrypt.onclick = async function () { // Encrypt the message, decrypt it, and show both results.
-	await setText(encrypted, Security.encrypt(getTag(), message.value));
-        await encrypted.oninput();
+
+      decryptTag.oninput = decryptEncrypted.oninput = async function () { // Inputs changed for decrypt.
+	await setText(decryptTag, checkTagYours(decryptTag.textContent));
+	await setText(decryptMessage, Security.decrypt(decryptTag.textContent, decryptEncrypted.textContent));
       };
-      encrypted.oninput = async function () { // Decrypt the current contents of encrypted.
-	await setText(decrypted, Security.decrypt(getTag(), encrypted.textContent));
+      encryptTag.oninput = encryptMessage.oninput = async function () { // Inputs changed for encrypt.
+	await setText(encryptTag, checkTagValid(encryptTag.textContent));
+	await setText(encryptEncrypted, Security.encrypt(encryptTag.textContent, encryptMessage.textContent));
+	await setText(decryptEncrypted, encryptEncrypted.textContent);
+	decryptTag.oninput();
       };
-      async function createPersona() {
-        yourPersona.textContent = "(generating...)";
-	await setText(yourPersona, Security.create(thisDevice.textContent));
-	localStorage.setItem('yourPersona', yourPersona.textContent);
-	persona.onclick = destroyPersona;
-        persona.textContent = "forget persona";
-        muck('--revealed');
-	document.querySelector('input[value = "yourPersona"]').checked = true;
+      encryptDecrypt.onclick = async function () { // Encrypt the message, decrypt it, and show both results.
+	await setText(encryptTag, getTag());
+	await setText(decryptTag, getTag());
+	await setText(encryptMessage, message.textContent);
+	[encrypt, decrypt].forEach(element => element.classList.remove('hidden'));
+        await encryptTag.oninput();
+      };
+
+      verifyTag.oninput = verifyMessage.oninput = verifySignature.oninput = async function () { // Inputs changed for verify.
+	await setText(verifyTag, checkTagValid(verifyTag.textContent));
+	await setText(verifyVerified, Security.verify(verifyTag.textContent, verifySignature.textContent, verifyMessage.textContent));
+      };
+      signTag.oninput = signMessage.oninput = async function () { // Inputs changed for sign.
+	await setText(signTag, checkTagYours(signTag.textContent));
+      	await setText(signSignature, Security.sign(signTag.textContent, signMessage.textContent));
+	await setText(verifySignature, signSignature.textContent);
+        await verifyTag.oninput();
+      };
+      signVerify.onclick = async function () { // Sign the message, verify the signature, and show both results.
+	await setText(signTag, getTag());
+	await setText(verifyTag, getTag());
+	await setText(signMessage, message.textContent);
+	await setText(verifyMessage, message.textContent);
+	[sign, verify].forEach(element => element.classList.remove('hidden'));
+	await signTag.oninput();
+      };
+
+      createTeam.onclick = async function () {
+	let memberTag = getTag(),
+	    members = [memberTag],
+	    teamPromise = Security.create(memberTag);
+	await addTeamDisplay(teamPromise, members);
+	teams.push({tag: await teamPromise, members});
+	localStorage.setItem('teams', JSON.stringify(teams));
+      };
+      destroyTag.onclick = async function () {
+        let tag = getTag(),
+            team = teams.find(team => team.tag === tag);
+        await Security.destroy(tag).catch(_ => _);
+        if (team) {
+           teams.splice(teams.indexOf(team), 1);
+	   localStorage.setItem('teams', JSON.stringify(teams));
+           Array.prototype
+             .find.call(teamDisplays.children, display => display.querySelector('result tag').textContent === tag)
+             .remove();
+        } else {
+          setText(thisDeviceTag, Promise.reject('You do not have access to the private key'));
+        }
+      };
+      async function addMember(members, membersDisplay) { // Add selected tag as member, udpating display and persistence.
+	let memberTag = getTag(),
+            teamDisplay = membersDisplay.parentElement,
+	    teamTag = teamDisplay.querySelector('result tag').textContent,
+            message = teamDisplay.querySelector('message');
+        if (!await setText(message, Security.changeMembership(teamTag, {add: [memberTag]})))
+          return setTimeout(_ => message.textContent = '', 5e3);
+	members.push(memberTag);
+	localStorage.setItem('teams', JSON.stringify(teams));
+	addMemberDisplay(memberTag, membersDisplay);
+        maybeRedo();
       }
-      async function destroyPersona() {
-	let recreate = false;
-	await Security.destroy(yourPersona.textContent).catch(async error => {
-	  alert(error.message + ' but we will create a new persona.');
-	  recreate = true;
-	});
-	await getCheckedTag(yourPersona);
-	localStorage.removeItem('yourPersona');
-	persona.onclick = createPersona;
-	persona.textContent = "create persona from this device";
-	if (recreate) await createPersona();
+      async function removeMember(event) { // Remove the associated member.
+        let display = event.target.parentElement,
+	    memberTag = display.querySelector('tag').textContent,
+	    teamDisplay = display.closest('div'),
+	    teamTag = teamDisplay.querySelector('result tag').textContent,
+	    team = teams.find(team => team.tag === teamTag),
+            message = teamDisplay.querySelector('result message');
+	if (!await setText(message, Security.changeMembership(teamTag, {remove: [memberTag]})))
+          return setTimeout(_ => message.textContent = '', 5e3);
+	team.members.splice(team.members.indexOf(teamTag), 1);
+	localStorage.setItem('teams', JSON.stringify(teams));
+	display.remove();
+	checkAllTeams();
+        maybeRedo();
       }
-      let personaTag = localStorage.getItem('yourPersona');
-      if (personaTag) {
-	setGood(yourPersona)(personaTag);
-	persona.onclick = destroyPersona;
-	persona.textContent = "forget persona";
-        document.querySelector('input[value = "yourPersona"]').checked = true;
-        muck('--revealed');
-      } else {
-	persona.onclick = createPersona;
-      }
-      document.querySelectorAll('input[type="checkbox"].reveal').forEach(checkbox => {
-	checkbox.onclick = async event => {
-	  let deviceLabel = checkbox.parentElement.querySelector('input[type="radio"]').value,
-	      deviceTag = document.getElementById(deviceLabel).textContent,
-	      options = {},
-	      option = checkbox.checked ? 'add' : 'remove',
-	      personaTag = yourPersona.textContent;
-	  options[option] = deviceTag;
-	  await Security.changeMembership(personaTag, options).catch(error => {
-	    alert(error.message);
-	    checkbox.checked = !checkbox.checked;
-	  });
-	};
-      });
+
+      // Export some functions from the module, for use by the UI.
+      Object.assign(window, {addMember, removeMember, checkTagYours, maybeRedo});
+      teams = JSON.parse(localStorage.getItem('teams') || '[]');
+      teams.forEach(({tag, members}) => addTeamDisplay(tag, members));
+      destroyEverything.onclick = _ => {
+        localStorage.clear();
+        location.reload();
+      };
     </script>
   </body>
 </html>
