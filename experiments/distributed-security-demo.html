@@ -36,7 +36,7 @@
       <label><input type="radio" name="use" value="thisDeviceTag" checked /> Your personal device <i>tag</i> in this browser:</label> 
       <tag>(generating...)</tag> <!-- fixme: make tag part of label. Problem is that when we make a var for each result sub element, we don't yet go two deep. -->
     </result>
-    <p><textarea id="message">The message you type here will be encrypted or signed using the buttons below.</textarea></p>
+    <p><textarea id="message">The message you type here will be encrypted or signed when you use the buttons below.</textarea></p>
 
     <section class="encrypt">
       <result>encrypt(<tag><b><i>anyone's</i></b> tag</tag>, <message>message</message>) = <encrypted>encrypted</encrypted></result>
@@ -52,7 +52,7 @@
 	  <li>Each time you encrypt (press the button again), the encrypted output is different.</li>
 	  <li>Why?
             <ul>
-              <li>Messages can be sent and stored anywhere, yet only be read by using the proper tag.</li>
+              <li>Messages can be safely sent and stored anywhere, yet only be read by using the proper tag. There's nothing to steal.</li>
               <li>Even if you send the same message again, no one can recognize it from before without decoding it.</li>
             </ul>
 	  </li>
@@ -72,9 +72,11 @@
       <section class="discussion">
 	<ul>
 	  <li>If you alter the signature or message inputs, the verify output will be false.</li>
+	  <li>A different message, or even the same message re-signed (press the button again), results in a different signature.</li>
 	  <li>Why?
             <ul>
               <li>A signature included with a message or transaction can prove that the message or transaction is authentic and unmodified.</li>
+	      <li>Instead of a login password, a service can store just your tag, which cannot be used by a thief to sign or decrypt anything. And yet your browser can "sign you in" by signing a challenge (e.g., a random string) from the site, that the site then verifies with your tag.</li>
             </ul>
 	  </li>
 	</ul>
@@ -95,7 +97,7 @@
 	  <li>Why?
             <ul>
               <li>You only need to know the tag of someone in order to send them a secret message that no one (not even you) can read.</li>
-              <li>An application can definitively know whether a posted message or transaction was made by a given tag, or whether it is fake.</li>
+              <li>An application needs only your tag (not your actual key) to definitively prove whether a posted message or transaction was made by a given tag, or whether it is fake.</li>
             </ul>
 	  </li>
 	</ul>
@@ -151,13 +153,14 @@
       </p>
       <section class="discussion">
 	<ul>
-	  <li>As long as tag has your personal device tag or your recovery tag as members, you can add or remove other tags to it.</li>
-	  <li>You can create a team that has tags you do not own, but you won't be able to use the tag (encrypt, sign, or change members) unless the tag contains a member that you do own.</li>
-	  <li>You can even create teams that have other teamms as members.</li>
+	  <li>As long as a tag has your personal device tag or your recovery tag as members, you can add or remove other tags as members.</li>
+	  <li>You can create a team that has tags you do not own, but it isn't useful to you because you won't be able to use the tag (encrypt, sign, or change members) unless the tag contains at least one member that you do own. (Applications can create user interfaces that make this simpler. Here we are trying to show how things work under the hood.)</li>
+	  <li>You can even create teams that have other teams as members.</li>
 	  <li>Why?
 	    <ul>
 	      <li>A real application can create a "team" to represent you as a human, that has a recovery tag and at least one device tag, and it can use that team tag for you throughout the app. Anyone can encrypt for you to read or verify your signatures, and you can sign and decrypt on any device that you add to your "team" of devices.</li>
-	      <li>Meanwhile, families, friends, organizations, and workplaces can form teams of invididuals, such that they can verify signatures from anyone on the team, and encrypt for anone on the team to read.</li>
+	      <li>Meanwhile, families, friends, organizations, and workplaces can form teams of individuals, such that they can verify signatures from anyone on the team, and encrypt for anyone on the team to read.</li>
+	      <li>Anyone can create new teams at any time, with no centralized gatekeeper.</li>
 	    </ul>
 	  </li>
 	</ul>
@@ -306,7 +309,7 @@
       encryptDecrypt.onclick = async function (event) { // Encrypt the message, decrypt it, and show both results.
 	await setText(encryptTag, getTag());
 	await setText(decryptTag, getTag());
-	await setText(encryptMessage, message.textContent);
+	await setText(encryptMessage, message.value);
 	[encrypt, decrypt].forEach(element => element.classList.remove('hidden'));
         await encryptTag.oninput();
         if (event) document.body.className = "encrypt";
@@ -325,8 +328,8 @@
       signVerify.onclick = async function (event) { // Sign the message, verify the signature, and show both results.
 	await setText(signTag, getTag());
 	await setText(verifyTag, getTag());
-	await setText(signMessage, message.textContent);
-	await setText(verifyMessage, message.textContent);
+	await setText(signMessage, message.value);
+	await setText(verifyMessage, message.value);
 	[sign, verify].forEach(element => element.classList.remove('hidden'));
         await signTag.oninput();
         if (event) document.body.className = "sign";
