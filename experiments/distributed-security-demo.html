@@ -9,7 +9,7 @@
       result {overflow-x: hidden; white-space: nowrap; text-overflow: ellipsis;}
       input[name="spacer"] {visibility: hidden;}
       result {display: block;}
-      result:not([id]) {color: grey; margin-top: 10px;}
+      result:not([id]):not(.team) {color: grey; margin-top: 10px;}
       tag, message, signature, verified, encrypted, decrypted {display: inline-block; width:20vw; overflow-x: inherit; text-overflow: inherit; vertical-align: middle; text-align: center;}
       result[id="decrypt"] message, result[id="verify"] verified {font-weight: bold; }
       .hidden {visibility: hidden;}
@@ -50,11 +50,16 @@
 
     <hr/>    
     <h2>Part II. Key Management</h2>
+    <result id="recovery">
+      <label><input type="radio" name="use" value="recovery"/> Your recovery tag:</label>
+      <tag></tag>
+    </result>
+    <hr/>
     <div id="teamDisplays"></div>
     <template id="team">
       <div>
-	<result>
-          <label><input type="radio" name="use"/>team tag: </label>
+	<result class="team">
+          <label><input type="radio" name="use"/> team tag: </label>
           <tag>(generating...)</tag>  <button>add selected tag as member</button>
           <message></message>
         </result>
@@ -80,7 +85,7 @@
 	return function (text) {
 	  element.textContent = text;
 	  element.style.color = 'darkgreen';
-          return true;
+          return text || true;
 	}
       }
       function setBad(element) { // Return a function to set an element with a bad result.
@@ -144,6 +149,7 @@
 	membersDisplay.append(memberDisplay);
 	await setText(tagDisplay, checkTagYours(tag));
       }
+      function canonicalize(string) { return string.replace(/\W/g, '').normalize("NFD").replace(/\p{Diacritic}/gu, '').toUpperCase(); }
     </script>
 
     <script type="module">
@@ -156,8 +162,12 @@
       // Answer any string that is always the same for the same individual user on this device.
       // Used in encrypting device keys within the vault. 
       // For security, it should be different for different users and for different devices.
-      Security.getUserDeviceSecret = () => demoSecret;
-
+      var cachedAnswer = '';
+      Security.getUserDeviceSecret = (tag, securityPrompt) => {
+        if (!securityPrompt) return demoSecret;
+        while (!cachedAnswer) { cachedAnswer = prompt(securityPrompt); }
+        return cachedAnswer;
+      };
       await Security.ready;            // Wait for Security to initialize.
 
       function checkTagValid(tag) { // Promise tag if it is any tag known to this cloud, else reject tag.
@@ -177,10 +187,14 @@
       await displayTag('thatDeviceTag', function () { return Security.create(); })
       demoSecret = 'thisDevice'; // ... and change it back so the temporary value is no longer accessible to us.
       await setText(thatDeviceTag, checkTagYours(thatDeviceTag.textContent)); // Show by side-effect that we cannot use it.
+      let temp = localStorage.getItem('recovery'); if (temp) setGood(recoveryTag)(temp);
       // With tags now defined, enable the buttons that use them.
       [signVerify, encryptDecrypt, createTeam].forEach(function (button) { button.disabled = false; });
 
-      function maybeRedo() {
+      async function maybeRedo(event) {
+        cachedAnswer = '';
+        if (event && (event.target.value === 'recovery') && !(recoveryTag.textContent))
+           localStorage.setItem('recovery', setGood(recoveryTag)(await Security.create({prompt: "What it the capital of Assyria?"})));
 	if (verifyVerified.textContent) signVerify.onclick();
 	if (encryptEncrypted.textContent) encryptDecrypt.onclick();
       }
@@ -253,8 +267,9 @@
             teamDisplay = membersDisplay.parentElement,
 	    teamTag = teamDisplay.querySelector('result tag').textContent,
             message = teamDisplay.querySelector('message');
-        if (!await setText(message, Security.changeMembership(teamTag, {add: [memberTag]})))
+        if (!await setText(message, Security.changeMembership(teamTag, {add: [memberTag]}))) {
           return setTimeout(_ => message.textContent = '', 5e3);
+        }
 	members.push(memberTag);
 	localStorage.setItem('teams', JSON.stringify(teams));
 	addMemberDisplay(memberTag, membersDisplay);
