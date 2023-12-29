@@ -13,70 +13,156 @@
       tag, message, signature, verified, encrypted, decrypted {display: inline-block; width:20vw; overflow-x: inherit; text-overflow: inherit; vertical-align: middle; text-align: center;}
       result[id="decrypt"] message, result[id="verify"] verified {font-weight: bold; }
       .hidden {visibility: hidden;}
-
+      .prompt { font-weight: bold; }
+      body:not(.thisDeviceTag) .encrypt .prompt,
+      body:not(.encrypt) .encrypt .discussion,
+      body:not(.encrypt) .sign .prompt,
+      body:not(.sign) .sign .discussion,
+      body:not(.sign) .other .prompt,
+      body:not(.thatDeviceTag) .other .discussion,
+      body:not(.thatDeviceTag) .recovery .prompt,
+      body:not(.recovery) .recovery .discussion,
+      body:not(.recovery) .team .prompt,
+      body:not(.on) .team .discussion /* default radio button value is "on" */
+      { visibility: hidden; }
     </style>
   </head>
-  <body>
+  <body class="thisDeviceTag">
     <h1>Distributed Security</h1>
     <p class="centered">an <i>interactive demo</i> of the <a href="https://github.com/kilroy-code/distributed-security">our library</a>, including the <b>four basic cryptographic operations</b>, and of our approach to <b>key management</b></p>
     <p class="centered">What you <i>do</i> with it, and what <i>your user interface is</i>, is up to the application that you build.</p>
     <h2>Part I. Cryptography Basics</h2>
     <result id="thisDevice">
-      <label><input type="radio" name="use" value="thisDeviceTag" checked /> Your personal device <i>tag</i> in this browser:</label> <!-- fixme: do we need value= any more? -->
+      <label><input type="radio" name="use" value="thisDeviceTag" checked /> Your personal device <i>tag</i> in this browser:</label> 
       <tag>(generating...)</tag> <!-- fixme: make tag part of label. Problem is that when we make a var for each result sub element, we don't yet go two deep. -->
     </result>
     <p><textarea id="message">The message you type here will be encrypted or signed using the buttons below.</textarea></p>
 
-    <result>encrypt(<tag><b><i>anyone's</i></b> tag</tag>, <message>message</message>) = <encrypted>encrypted</encrypted></result>
-    <result id="encrypt" class="hidden">encrypt(<tag contenteditable></tag>, <message contenteditable></message>) = <encrypted></encrypted></result>
-    <result>decrypt(<tag><b><i>your</i></b> tag</tag>, <encrypted>encrypted</encrypted>) = <b><message>message</message></b></result>
-    <result id="decrypt" class="hidden">decrypt(<tag contenteditable></tag>, <encrypted contenteditable></encrypted>) = <message></message></result>
-    <p><button id="encryptDecrypt" disabled>encrypt</button> </p>
-    <hr/>
-    
-    
-    <result>sign(<tag><b><i>your</i></b> tag</tag>, <message>message</message>) = <signature>signature</signature></result>
-    <result id="sign" class="hidden">sign(<tag contenteditable></tag>, <message contenteditable></message>) = <signature></signature></result>
-    <result>verify(<tag><b><i>anyone's</i></b> tag</tag>, <signature>signature</signature>, <message>message</message>) = <b><verified>verified</verified></b></result>
-    <result id="verify" class="hidden">verify(<tag contenteditable></tag>, <signature contenteditable></signature>, <message contenteditable></message>) = <verified></verified></result>
-    <p> <button id="signVerify" disabled>sign</button> </p>
-    <hr/>
+    <section class="encrypt">
+      <result>encrypt(<tag><b><i>anyone's</i></b> tag</tag>, <message>message</message>) = <encrypted>encrypted</encrypted></result>
+      <result id="encrypt" class="hidden">encrypt(<tag contenteditable></tag>, <message contenteditable></message>) = <encrypted></encrypted></result>
+      <result>decrypt(<tag><b><i>your</i></b> tag</tag>, <encrypted>encrypted</encrypted>) = <b><message>message</message></b></result>
+      <result id="decrypt" class="hidden">decrypt(<tag contenteditable></tag>, <encrypted contenteditable></encrypted>) = <message></message></result>
+      <p><button id="encryptDecrypt" disabled>encrypt</button> 
+	<span class="prompt">Press the "encrypt" button to fill in the inputs to encrypt and decrypt, and see the outputs.</span>
+      </p>
+      <section class="discussion">
+	<ul>
+	  <li>You can edit the inputs to see what happens to the output.</li>
+	  <li>Each time you encrypt (press the button again), the encrypted output is different.</li>
+	  <li>Why?
+            <ul>
+              <li>Messages can be sent and stored anywhere, yet only be read by using the proper tag.</li>
+              <li>Even if you send the same message again, no one can recognize it from before without decoding it.</li>
+            </ul>
+	  </li>
+	</ul>
+      </section>
+      <hr/>
+    </section>
 
-    <result id="thatDevice">
-      <label><input type="radio" name="use" value="thatDeviceTag"/> A device tag from a different computer:</label>
-      <tag>(generating...)</tag>
-    </result>
-    <hr/>
+    <section class="sign">
+      <result>sign(<tag><b><i>your</i></b> tag</tag>, <message>message</message>) = <signature>signature</signature></result>
+      <result id="sign" class="hidden">sign(<tag contenteditable></tag>, <message contenteditable></message>) = <signature></signature></result>
+      <result>verify(<tag><b><i>anyone's</i></b> tag</tag>, <signature>signature</signature>, <message>message</message>) = <b><verified>verified</verified></b></result>
+      <result id="verify" class="hidden">verify(<tag contenteditable></tag>, <signature contenteditable></signature>, <message contenteditable></message>) = <verified></verified></result>
+      <p> <button id="signVerify" disabled>sign</button>
+	<span class="prompt">Press the "sign" button to fill in the inputs to sign and verify, and see the outputs.</span>
+      </p>
+      <section class="discussion">
+	<ul>
+	  <li>If you alter the signature or message inputs, the verify output will be false.</li>
+	  <li>Why?
+            <ul>
+              <li>A signature included with a message or transaction can prove that the message or transaction is authentic and unmodified.</li>
+            </ul>
+	  </li>
+	</ul>
+      </section>
+      <hr/>
+    </section>
+
+    <section class="other">
+      <result id="thatDevice">
+	<label><input type="radio" name="use" value="thatDeviceTag"/> A device tag from a different computer:</label>
+	<tag>(generating...)</tag>
+      </result>
+      <p><span class="prompt">Select this other tag to use in the above operations. This tag is NOT one that you have access to in this browser.</span></p>
+      <section class="discussion">
+	<ul>
+	  <li>You can encrypt messages for someone else's tag, but you cannot decrypt them.</li>
+	  <li>You cannot sign message with someone else's tag, but you can verify signatures made by others.</li>
+	  <li>Why?
+            <ul>
+              <li>You only need to know the tag of someone in order to send them a secret message that no one (not even you) can read.</li>
+              <li>An application can definitively know whether a posted message or transaction was made by a given tag, or whether it is fake.</li>
+            </ul>
+	  </li>
+	</ul>
+      </section>      
+      <hr/>
+    </section>
 
     <hr/>    
     <h2>Part II. Key Management</h2>
-    <result id="recovery">
-      <label><input type="radio" name="use" value="recovery"/> Your recovery tag:</label>
-      <tag></tag>
-    </result>
-    <hr/>
-    <div id="teamDisplays"></div>
-    <template id="team">
-      <div>
-	<result class="team">
-          <label><input type="radio" name="use"/> team tag: </label>
-          <tag>(generating...)</tag>  <button>add selected tag as member</button>
-          <message></message>
-        </result>
-	<members></members>
-	<hr/>
-      </div>
-    </template>
-    <template id="member"> <!-- fixme: make these be hanging indents -->
-      <result><button>remove member:</button> <tag></tag></result>
-    </template>
-      
-    <p>
-      <button id="createTeam" disabled>create team from selected tag</button>
-      <button id="destroyTag">forget selected tag</button>
-      <button id="destroyEverything">forget everything and start over</button>
-    </p>
+    <section class="recovery">
+      <result id="recovery">
+	<label><input type="radio" name="use" value="recovery"/> Your recovery tag:</label>
+	<tag></tag>
+      </result>
+      <p><span class="prompt">Select this recovery tag, and answer the resulting question however you like, but remember the answer!</span></p>
+      <section class="discussion">
+	<ul>
+	  <li>Each time you select another tag, this demo "forgets" your answer. To use this tag again, you need to supply the same answer. A different answer won't work.</li>
+	  <li>This could have been any number of questions and answers, all concatenated together.</li>
+	  <li>Why?
+            <ul>
+              <li>A recovery tag is like a device you always have with you, even if your phone or laptop go away.</li>
+              <li>Although it is available from anywhere in the cloud, there is no unencrypted copy to steal.</li>
+            </ul>
+	  </li>
+	</ul>
+      </section>      
+      <hr/>
+    </section>
 
+    <section class="team">
+      <div id="teamDisplays"></div>
+      <template id="team">
+	<div>
+	  <result class="team">
+            <label><input type="radio" name="use"/> team tag: </label>
+            <tag>(generating...)</tag>  <button>add selected tag as member</button>
+            <message></message>
+          </result>
+	  <members></members>
+	  <hr/>
+	</div>
+      </template>
+      <template id="member"> <!-- fixme: make these be hanging indents -->
+	<result><button>remove member:</button> <tag></tag></result>
+      </template>
+      
+      <p>
+	<button id="createTeam" disabled>create team from selected tag</button>
+	<button id="destroyTag">forget selected tag</button>
+	<button id="destroyEverything">forget everything and start over</button>
+	<span class="prompt">Create a "team" from any selected tag.</span>
+      </p>
+      <section class="discussion">
+	<ul>
+	  <li>As long as tag has your personal device tag or your recovery tag as members, you can add or remove other tags to it.</li>
+	  <li>You can create a team that has tags you do not own, but you won't be able to use the tag (encrypt, sign, or change members) unless the tag contains a member that you do own.</li>
+	  <li>You can even create teams that have other teamms as members.</li>
+	  <li>Why?
+	    <ul>
+	      <li>A real application can create a "team" to represent you as a human, that has a recovery tag and at least one device tag, and it can use that team tag for you throughout the app. Anyone can encrypt for you to read or verify your signatures, and you can sign and decrypt on any device that you add to your "team" of devices.</li>
+	      <li>Meanwhile, families, friends, organizations, and workplaces can form teams of invididuals, such that they can verify signatures from anyone on the team, and encrypt for anone on the team to read.</li>
+	    </ul>
+	  </li>
+	</ul>
+      </section>
+    </section>
 
     <script>
       if (document.body.clientWidth < 600) screen.orientation.lock('landscape');
@@ -153,8 +239,8 @@
     </script>
 
     <script type="module">
-      //import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
-      import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs"; window.Security = Security;
+      import Security from "https://kilroy-code.github.io/distributed-security/index.mjs";
+      //import Security from "http://localhost:3000/@kilroy-code/distributed-security/index.mjs"; window.Security = Security;
       import Cloud from "./cloud.mjs"; // A simple browser-local "cloud" for this demo.
 
       // Applications must give Security an implementation of cloud storage and a secret.
@@ -193,8 +279,12 @@
 
       async function maybeRedo(event) {
         cachedAnswer = '';
-        if (event && (event.target.value === 'recovery') && !(recoveryTag.textContent))
-           localStorage.setItem('recovery', setGood(recoveryTag)(await Security.create({prompt: "What it the capital of Assyria?"})));
+        if (event) {
+	  document.body.className = event.target.value || 'team';
+	  if ((event.target.value === 'recovery') && (!(recoveryTag.textContent))) {
+	    localStorage.setItem('recovery', setGood(recoveryTag)(await Security.create({prompt: "What it the capital of Assyria?"})));
+	  }
+	}
 	if (verifyVerified.textContent) signVerify.onclick();
 	if (encryptEncrypted.textContent) encryptDecrypt.onclick();
       }
@@ -213,12 +303,13 @@
 	await setText(decryptEncrypted, encryptEncrypted.textContent);
 	decryptTag.oninput();
       };
-      encryptDecrypt.onclick = async function () { // Encrypt the message, decrypt it, and show both results.
+      encryptDecrypt.onclick = async function (event) { // Encrypt the message, decrypt it, and show both results.
 	await setText(encryptTag, getTag());
 	await setText(decryptTag, getTag());
 	await setText(encryptMessage, message.textContent);
 	[encrypt, decrypt].forEach(element => element.classList.remove('hidden'));
         await encryptTag.oninput();
+        if (event) document.body.className = "encrypt";
       };
 
       verifyTag.oninput = verifyMessage.oninput = verifySignature.oninput = async function () { // Inputs changed for verify.
@@ -231,22 +322,24 @@
 	await setText(verifySignature, signSignature.textContent);
         await verifyTag.oninput();
       };
-      signVerify.onclick = async function () { // Sign the message, verify the signature, and show both results.
+      signVerify.onclick = async function (event) { // Sign the message, verify the signature, and show both results.
 	await setText(signTag, getTag());
 	await setText(verifyTag, getTag());
 	await setText(signMessage, message.textContent);
 	await setText(verifyMessage, message.textContent);
 	[sign, verify].forEach(element => element.classList.remove('hidden'));
-	await signTag.oninput();
+        await signTag.oninput();
+        if (event) document.body.className = "sign";
       };
 
-      createTeam.onclick = async function () {
+      createTeam.onclick = async function (event) {
 	let memberTag = getTag(),
 	    members = [memberTag],
 	    teamPromise = Security.create(memberTag);
 	await addTeamDisplay(teamPromise, members);
 	teams.push({tag: await teamPromise, members});
 	localStorage.setItem('teams', JSON.stringify(teams));
+	if (event) document.body.className = "on";
       };
       destroyTag.onclick = async function () {
         let tag = getTag(),
