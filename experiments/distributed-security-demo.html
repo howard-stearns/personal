@@ -64,8 +64,8 @@
     <section class="sign">
       <result>sign(<tag><b><i>your</i></b> tag</tag>, <message>message</message>) = <signature>signature</signature></result>
       <result id="sign" class="hidden">sign(<tag contenteditable></tag>, <message contenteditable></message>) = <signature></signature></result>
-      <result>verify(<tag><b><i>anyone's</i></b> tag</tag>, <signature>signature</signature>, <message>message</message>) = <b><verified>verified</verified></b></result>
-      <result id="verify" class="hidden">verify(<tag contenteditable></tag>, <signature contenteditable></signature>, <message contenteditable></message>) = <verified></verified></result>
+      <result>verify(<tag><b><i>anyone's</i></b> tag</tag>, <message>message</message>, <signature>signature</signature>) = <b><verified>verified</verified></b></result>
+      <result id="verify" class="hidden">verify(<tag contenteditable></tag>, <message contenteditable></message>, <signature contenteditable></signature>) = <verified></verified></result>
       <p> <button id="signVerify" disabled>sign</button>
 	<span class="prompt">Press the "sign" button to fill in the inputs to sign and verify, and see the outputs.</span>
       </p>
@@ -156,6 +156,7 @@
 	  <li>As long as a tag has your personal device tag or your recovery tag as members, you can add or remove other tags as members.</li>
 	  <li>You can create a team that has tags you do not own, but it isn't useful to you because you won't be able to use the tag (encrypt, sign, or change members) unless the tag contains at least one member that you do own. (Applications can create user interfaces that make this simpler. Here we are trying to show how things work under the hood.)</li>
 	  <li>You can even create teams that have other teams as members.</li>
+	  <li>If a team has a recover tag as member, the prompt is required when changing members. However, to use the team for decryption or signing, the recovery prompt is only use if the current device does not have access to any other members of the team.
 	  <li>Why?
 	    <ul>
 	      <li>A real application can create a "team" to represent you as a human, that has a recovery tag and at least one device tag, and it can use that team tag for you throughout the app. Anyone can encrypt for you to read or verify your signatures, and you can sign and decrypt on any device that you add to your "team" of devices.</li>
