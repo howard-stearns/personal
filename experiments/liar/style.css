@@ -1,0 +1,44 @@
+row, people {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+row > md-filled-text-field {
+  flex-grow: 2;
+}
+
+people {
+  display: flex;
+  flex-wrap: wrap;
+}
+people:not(people:has(tagged-user)):after {
+  content: 'No one else is here yet. Paste the url into a different browser, or use the QR code on your phone.';
+}
+
+div#posts {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 10px;
+}
+
+name {
+  position: relative;
+  left: -5px;
+}
+
+.selected {
+  border: 2px solid rgb(99, 83, 159);
+}
+
+.unavailable {
+  color: rgb(227, 227, 228);
+}
+
+minidenticon-svg svg {
+  border-radius: 50%;
+  background-color: rgb(229, 225, 233);
+  height: 48px;
+  width: 48px;
+}

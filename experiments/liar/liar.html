@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html style="font-family: sans-serif">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, viewport-fit=cover"/>
+
+    <script src="https://cdn.jsdelivr.net/npm/@croquet/croquet@1.0.5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/minidenticons@4.2.1/minidenticons.min.js" type="module"></script>
+
+    <script src="qr-code.mjs"></script>
+    <script src="material-design-bundle.js"></script>
+    <link rel="stylesheet" href="style.css"></link>
+
+    <template id="avatar">
+      <Avatar>
+	<link rel="stylesheet" href="style.css"></link>
+	<minidenticon-svg></minidenticon-svg>
+	<name></name>
+      </Avatar>
+    </template>
+  </head>
+
+  <body>
+    <md-dialog id="welcome" open>
+      <div slot="headline">
+	Cryptography Demo
+      </div>
+      <div slot="content">
+	<p>Post messages to the others online.</p>
+	<p>Every message is encrypted, and will be decrypted <em>only</em> by the users that you select. The users that you do <em>not</em> select will see only the ciphertext.</p>
+	<p>Begin by entering your initial(s):
+	  <md-filled-text-field id="initial" label="Initial" value="H"></md-filled-text-field>
+	</p>
+      </div>
+    </md-dialog>
+
+    <md-dialog id="noneSelected">
+      <div slot="headline">Select People</div>
+      <div slot="content">
+	<p>Select the people who will be able to decrypt this.</p>
+	<p>Include yourself if desired.</p>
+      </div>
+    </md-dialog>
+
+    <row>
+      You:
+      <tagged-user id="me"></tagged-user>
+      <md-filled-text-field id="input" label="What do you want to post?"></md-filled-text-field>
+      <md-filled-button id="post" disabled>Enter text to post</md-filled-button>
+    </row>
+    <people id="others">Others: </people>
+    <div id="posts"></div>
+    <div id="qrcodeHolder"></div>
+
+    <script src="liar.mjs" type="module"></script>
+  </body>
+</html>
