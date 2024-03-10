@@ -80,7 +80,6 @@ initial.onkeydown = (event) => { if (event.key === 'Enter') welcome.close(); };
 
 input.oninput = () => TaggedUser.updatePostLabel();
 input.onkeydown = (event) => { // Enter key pushes the post button, if possible.
-  console.log(event.key);
   if (event.key !== 'Enter') return;
   if (!document.querySelector('.selected')) return noneSelected.show();
   post.onclick();

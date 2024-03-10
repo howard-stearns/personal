@@ -97,7 +97,7 @@ class Interface extends Croquet.View { // Interface between application and the 
     this.publish(this.sessionId, 'view-announce', Object.assign({viewId: this.viewId}, data));
   }
   post(message) { // Post a message.
-    this.publish(this.sessionId, 'post', signature);
+    this.publish(this.sessionId, 'post', message);
   }
 }
 
