@@ -8,12 +8,12 @@ A two-page printable version is [here](Stearns-resume.pdf).
 
 ## Skills Summary
 
-- Language Polyglot: C++ _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity), [`TUNEUP`](#tunesup-media), [`ELWOOD`](#elwood))_, C# _([`LINDEN`](#linden-lab))_ Javascript _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity), [`SHOCASE`](#showcase), [`HP`](#hp), [`TUNEUP`](#tuneup-media))_, …, but also the implementation of Lisp _([`ELWOOD`](#elwood))_, Smalltalk _([`WISCONSIN`](#universyity-of-wisconsin), [`TELEPLACE`](#teleplace))_, and NodeJS native extensions _([`TUNEUP`](#tuneup-media))_.
-- Opportunistic Framework Consumer:  Express, Rails, React, Angular, Material Design, Unity…
-- Adept with Wacky Tech: multi-user realtime distributed systems, VR, blockchain, symbolic AI, embedded…
-- Technical Manager: Proven track record in product-oriented development, technical leadership, apropos innovation, and team mentorship, with a high rate of re-employment among colleagues.
-- Passionate About Results: Self-directed with extensive experience in cross functional team collaboration. On-time delivery of prototype-through-product iteration via modified Agile methodologies and test-driven development.
-- Effective Communicator: Strong ability to simplify complex problems, crafting functional solutions, and collaborating with industry thought leaders.
+- Language Polyglot: C++ _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity), [`TUNEUP`](#tuneup-media), [`ELWOOD`](#elwood))_, C# _([`LINDEN`](#linden-lab))_ Javascript _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity), [`SHOCASE`](#shocase), [`HP`](#hp), [`TUNEUP`](#tuneup-media))_, …, but also the implementation of Lisp _([`ELWOOD`](#elwood))_, Smalltalk _([`WISCONSIN`](#university-of-wisconsin), [`TELEPLACE`](#teleplace))_, and NodeJS native extensions _([`TUNEUP`](#tuneup-media))_.
+- Opportunistic Framework Consumer:  Express _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity))_, Rails _([`HIGH FIDELITY`](#high-fidelity))_), React _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity))_, Angular _([`SHOCASE`](#shocase))_, Material Design _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity))_, Unity _([`LINDEN`](#linden-lab))_ …
+- Adept with Wacky Tech: multi-user realtime distributed systems _([`LINDEN`](#linden-lab), [`HIGH FIDELITY`](#high-fidelity), [`TELEPLACE`](#teleplace), [`WISCONSIN`](#university-of-wisconsin))_, VR _([`HIGH FIDELITY`](#high-fidelity))_, blockchain _([`HIGH FIDELITY`](#high-fidelity))_, symbolic AI _([`WISCONSIN`](#university-of-wisconsin), [`ICAD`](#icad))_, low-level embedded systems _([`ELWOOD`](#elwood))_ …
+- Technical Manager: Proven track record in product-oriented development, technical leadership, apropos innovation, and team mentorship _([`HIGH FIDELITY`](#high-fidelity), [`SHOCASE`](#shocase), [`HP`](#hp), [`WISCONSIN`](#university-of-wisconsin), [`CURL`](#curl), [`ICAD`](#icad))_, with a high rate of re-employment among colleagues _([`LINDEN`](#linden), [`TUNEUP`](#tuneup-media), [`HP`](#hp), [`TELEPLACE`](#teleplace), [`ENGINEERING INTENT`](#engineering-intent), [`CURL`](#curl))_.
+- Passionate About Results: Self-directed with extensive experience in cross functional team collaboration. On-time delivery of prototype-through-product iteration via modified Agile methodologies and test-driven development. _([`HIGH FIDELITY`](#high-fidelity))_
+- Effective Communicator: Strong ability to simplify complex problems, crafting functional solutions, and collaborating with industry thought leaders. _([`HIGH FIDELITY`](#high-fidelity), [`TELEPLACE`](#teleplace), [`WISCONSIN`](#university-of-wisconsin), [`CURL`](#curl), [`ELWOOD`](#elwood))_
 
 ## Open Source   
 
@@ -88,7 +88,7 @@ Croquet Blog [wetmachine: Inventing the Future](https://www.wetmachine.com/categ
 
 Senior Developer - San Francisco, CA 2021-2024
 
-[Second Life](https://secondlife.com/) is the original multi-user metaverse (50M+ users), created by Philip Rosedale in 2004. I joined when Rosedale sold the assets of High Fidelity and remaining talent to Linden. The streaming-Web prototype was solo work using pre-release tech from Amazon, and the mobile app was with a an external company.
+[Second Life](https://secondlife.com/) is the original multi-user metaverse (50M+ users), created by Philip Rosedale in 2004. I joined when Rosedale sold the assets of High Fidelity and remaining talent to Linden. The streaming-Web prototype was solo work using pre-release tech from Amazon, and the mobile app was with a an external company. [source](#sl)
 
 - Spearheaded development for a mobile app and a streaming-Web prototype, collaborating with external teams to enhance user engagement.
 
@@ -96,7 +96,7 @@ Senior Developer - San Francisco, CA 2021-2024
 
 Lead Developer - San Francisco, CA 2015-2021
 
-High Fidelity was Rosedale's separate VR re-conception and ground-up re-implementation of the Second Life concept. I started as an early engineer (employee #12?), and eventually managed six senior engineer direct reports + four embedded from other teams. 
+High Fidelity was Rosedale's separate VR re-conception and ground-up re-implementation of the Second Life concept. I started as an early engineer (employee #12?), and eventually managed six senior engineer direct reports + four embedded from other teams. [source](#hifi)
 
 - Managed a team of senior engineers to optimize avatar data handling, achieving record synchronization of 600 concurrent animated avatars from one server, and 3000 users in one audio space.
 - Deployed the first NFT marketplace in the metaverse, with a blockchain payment system for user-generated content.
@@ -133,7 +133,7 @@ I joined [Palm](https://en.wikipedia.org/wiki/Palm,_Inc.) shortly before the rel
 
 Member of the Technical Staff - Redwood City, CA 2007-2011
 
-Teleplace (originally called [Qwaq](https://www.3dicc.com/about/)) was the enterprise commercialization of the Croquet project.
+Teleplace (originally called [Qwaq](https://www.3dicc.com/about/)) was the enterprise commercialization of the Croquet project. [source](#qwaq)
 
 - Delivered multiple diverse features in enterprise virtual worlds, including bandwidth-efficient avatar animation on 2005 hardware without a graphics card, enabling operation over edge cellular networks.
 
@@ -171,7 +171,7 @@ Curl was an MIT startup created by Tim Berners-Lee that created the rich interne
 
 Technology Director	- Oak Creek, WI 1992-1999
 
-Elwood is a small industrial firm with products in electronics, hydraulics, and robotics that transformed the artificial diamond market. 
+Elwood is a small industrial firm with products in electronics, hydraulics, and robotics that transformed the artificial diamond market. [source](#eclipse)
 
 - Developed low-level system software and factory automation controls, driving innovation in the artificial diamond market. 
 - Produced all aspects of the Eclipse Common Lisp system from concept to new industrial customers for Elwood.
