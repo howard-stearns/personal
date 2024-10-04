@@ -18,7 +18,7 @@ A _Graphics Processing Unit_ (GPU) is specialized hardware built-in or added to 
 
 _[PyTorch](https://pytorch.org/)_ is a large library of [Python](https://www.python.org/) utilities for defining, training, and running inferences on LLMs. Many open models use this, as do additional libraries such as Huggingface. PyTorch defines platform-independent high-level Python scripting abstractions around lower-level hardware-specific implementations of these abstractions.
 
-_Model Parallelism_ is the term for the distribution of parts of an LLM over multiple processing units, which is what this PoC does.
+_Model Parallelism_ is the term for the distribution of parts of an LLM over multiple processing units, which is what this Proof-of-Concept (PoC) does.
 
 ## Limitations and Potential Future Work
 
@@ -32,12 +32,12 @@ _Model Parallelism_ is the term for the distribution of parts of an LLM over mul
 
 **Access:** Although the UI is on the Web, the worker node software must be installed, and there is a lot to install.
 
-- Packaging this for easier installation is a fairly small task.
+- Packaging this for easier installation is a fairly small task, but necessary. (The _current_ process and documentation for the code and data from Meta is incomplete, inconsistent, and just generally not professional grade.)
 - Allowing resources to be contributed entirely through the Web is a very large task. In principle, Web standards give us everything needed, but the difficulty is in porting the required parts of PyTorch to the browser.
 
 ## Implementation
 
-[Accelerate](https://huggingface.co/docs/accelerate/en/usage_guides/big_modeling) and other libraries run inference one layer at a time, using the hooks provided by PyTorch inference and device abstractions. This PoC creates abstractions for _virtual remote_ devices that plugs into this mechanism.
+[Accelerate](https://huggingface.co/docs/accelerate/en/usage_guides/big_modeling) and other libraries run inference one layer at a time, using the hooks provided by PyTorch inference and device abstractions. There appears to be similar hooks built into Llama3. This PoC creates abstractions for _virtual remote_ devices that plugs into this mechanism.
 
 Contributed resources can come and go at any time, and the implementation robustly deals with this.
 
@@ -54,7 +54,8 @@ Both kinds of session are modeled in [Croquet](https://croquet.io/), and we use 
 1. The big Llama 3 405B model might not be compatible with any part of this, nor even the smaller Llama 3 models.
 2. There might not be enough hooks in the PyToch device modeling, or Accelerate (and alternatives) might not be compatible with such hooks.
 3. It might be too slow.
-4. It might be too hard or too expensive to get suitable resources into the network.
+4. Even the layers of the big models might be too big.
+5. It might be too hard or too expensive to get suitable resources into the network.
 
 Checklist:
 
@@ -66,4 +67,4 @@ Checklist:
 - [ ] Multiple distinct virtual remote devices.
 - [ ] Create a Croquet query model.
 - [ ] Increase model size to the largest that can be done with household machines. (Adjust quantization size as necessary. Note run time.)
-- [ ] Use rented cloud VMs to run queries through the big 405B model. (Note run time.)
+- [ ] Use rented cloud VMs to run queries through the big 405B model. (Note run time.)	
