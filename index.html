@@ -1,111 +1,434 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <title>Howard Stearns: Home</title>
-    <meta property="og:title" content="Howard Stearns" />
-    <meta property="og:image" content="images/howard-mad-hatter-square.png" />
-    <style>
-      button a { text-decoration: none; }
-      button { width: 200px; }
-      .words { border-style: groove; padding: 10px; margin:30px; color: #666666; }
-      table { width: 100%; padding: 30px; }
-      table.pictures { padding: 0; }
-      td.middle { padding: 40px; }
-    </style>
-  </head>
-  <body style="background-color: white;" link="#008080" vlink="#800080">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Howard Stearns - Resume</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Reset some default styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <!-- name flush left, epitaph flush right -->
-    <table>
-      <tbody>
-	<tr>
-	  <td> <font color="#000080" size="+3"> Howard Stearns </font> </td>
-	  <td align="right"> <font color="#000080" size="+2">Lead Developer and Managing Engineer</font> </td>
-	</tr>
-	<tr>
-	  <td><button><font size="+1"><a href="Stearns-resume.pdf"><b>resume</b></a></font></button></td>
-	  <td align="right"> <font color="#000080" size="+2">Advanced Software Products</font>
-	  </td>
-	</tr>
-	<tr>
-	  <td><button><font size="+1"><a href="Qualifications-Summary.html"><b>qualifications</b></a></font></button></td>
-	  <td align="right"><font color="#000080" size="+2">Special Projects</font> </td>
-	</tr>
-      </tbody>
-    </table>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      line-height: 1.6;
+    }
 
-    <table>
-      <tbody>
-	<tr>
-	  <td> 
-	    <table class="pictures">
-	      <tr>
-		<td><img src="images/daddys-little-ear.jpg" alt="Daddy's Ear" width="200" height="250"/></td>
-		<!-- <td><img src="images/howard-small.jpg" alt="On the Zeppelin" width="200" height="250"/></td> -->
-	      </tr>
-	      <tr>
-		<td><img src="images/howard-jake.jpg" alt="Virtual Business" width="200" height="200"/></td>
-		<!-- <td><img src="images/howard-john.jpg" alt="Virtual Fun" width="200" height="200"/></td> -->
-	      </tr>
-	    </table>
-	  </td> 
+    a {
+      color: #007acc;
+      text-decoration: none;
+    }
 
-          <td class="middle"> 
+    a:hover {
+      color: #005b9e;
+      text-decoration: underline;
+    }
 
-            <p align="justify">I have 35 years experience in systems
-              engineering, applications development, and management of
-              advanced software technologies. My passion is in novel
-              exploitations of fundmantal architectural insights.</p>
+    .container {
+      display: flex;
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
+    }
 
+    /* Table of Contents */
+    .toc {
+      width: 250px;
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 15px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      height: fit-content;
+    }
 
-	    <p align="justify">I am a Senior/Lead Developer at Second Life
-	      and previously High Fidelity, both companies created by
-	      Philip Rosedale to create large-scale virtual
-	      worlds. Earlier, I led groups working with computing pioneer
-	      Alan Kay to leverage advances in real-time, persistent
-	      metaverse collaboration.</p>
+    .toc h3 {
+      margin-bottom: 10px;
+      font-size: 1.2em;
+      color: #2c3e50;
+    }
 
-            <p align="justify">Earlier in my career, I served as
-              Technology Strategist for Curl, founded by WWW pioneer Tim
-              Berners-Lee to pioneer the concept of the single-page
-              app.</p>
+    .toc a {
+      display: block;
+      margin: 8px 0;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
 
-	    <p align="justify">Along the way, I have worked in mobile,
-	      early AI, blockchain, and embedded systems.</p>
+    .toc a:hover {
+      color: #005b9e;
+    }
 
-	  </td>
-	  <td align="right">I work at
-            the <font color="#000066"><i>intersection
-	    </i></font>of <i><font color="#000066"><br>
-		business strategy</font></i> and <font color="#000066"><i><br>
-		advanced technology</i></font>.<br>
-	    <br>
-	    I bring <font color="#000080"><i>new</i></font> and
-	    <font color="#000080"><i>unique technologies</i></font> to
-	    maturity.<br>
-	    I <font color="#000080"><i>define</i></font> them,
-	    <font color="#000080"><i>combine</i></font> them, and
-	    <font color="#000080"><i>refine</i></font> them. </td>
-	</tr>
-      </tbody>
-    </table>
-</p>
+    /* Main Content */
+    .content {
+      flex: 1;
+      margin-left: 280px;
+      padding: 0 20px;
+    }
 
-<p class="words" align="justify">
-  <big>computer mediated communication</big>, peer-to-peer, <i>full
-    stack</i>, <b><big>virtual worlds</big> and virtual
-    reality</b>, <i>collaboration</i>, meta-media integration,
-  <i>mobile</i>, <big>meta-architecture</big>, <b>serious games</b>,
-  semantic web, <i>social media</i>, <big>multi-media</big>,
-  ontology, <big>expert systems</big>, knowledge-based
-  engineering, <big>embedded systems</big>, <i>computer aided
-  design</i>, 3D graphics, <i><b>metaverse</b></i>, supervisory
-  control and data acquisition, <i>industrial controls</i>, realtime
-  systems, <big>information architecture</big>, enterprise web
-  systems,
-  <i>content management</i>, data integration, <i>search and
-    navigation</i>, guided configuration, <big>mass
-    customization</big>, engineer-to-order, <big>programming
-    languages</big> </p>
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    h2 {
+      font-size: 1.8em;
+      margin-top: 40px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 5px;
+    }
+
+    h3 {
+      font-size: 1.4em;
+      margin-top: 30px;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    p, ul, li {
+      margin-bottom: 15px;
+    }
+
+    ul {
+      list-style-type: disc;
+      margin-left: 20px;
+    }
+
+    /* Floating Action Button */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007acc;
+      color: #fff;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    /* Popup Table of Contents */
+    .popup-toc {
+      display: none;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 20px;
+      border-radius: 10px;
+      z-index: 999;
+      max-width: 80%;
+      max-height: 80%;
+      overflow-y: auto;
+    }
+
+    .popup-toc a {
+      display: block;
+      margin: 10px 0;
+      font-weight: 600;
+      transition: color 0.3s;
+    }
+
+    .popup-toc a:hover {
+      color: #005b9e;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 1024px) {
+      .toc {
+        display: none;
+      }
+      .content {
+        margin-left: 0;
+        padding: 0 20px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .fab {
+        display: flex;
+      }
+      .popup-toc {
+        right: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Table of Contents for Desktop -->
+    <div class="toc">
+      <h3>Table of Contents</h3>
+      <a href="#skills-summary">Skills Summary</a>
+      <a href="#open-source">Open Source</a>
+      <a href="#publications-and-conferences">Publications & Conferences</a>
+      <a href="#education">Education</a>
+      <a href="#experience">Experience</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h1 id="howard-stearns">Howard Stearns</h1>
+
+      <p>3303 Oak Knoll Drive, Redwood City, CA 94062 
+	650-817-5956 
+	stearns@alum.mit.edu</p>
+
+      <p>A two-page printable version is <a href="/personal/Stearns-resume.pdf">here</a>.</p>
+
+      <h2 id="skills-summary">Skills Summary</h2>
+
+      <ul>
+	<li><strong>Language Polyglot:</strong> C++ <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>, <a href="#tuneup-media"><code class="language-plaintext highlighter-rouge">TUNEUP</code></a>, <a href="#elwood"><code class="language-plaintext highlighter-rouge">ELWOOD</code></a>)</em>, C# <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>)</em> Javascript <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>, <a href="#shocase"><code class="language-plaintext highlighter-rouge">SHOCASE</code></a>, <a href="#hp"><code class="language-plaintext highlighter-rouge">HP</code></a>, <a href="#tuneup-media"><code class="language-plaintext highlighter-rouge">TUNEUP</code></a>)</em>, …, but also the implementation of Lisp <em>(<a href="#elwood"><code class="language-plaintext highlighter-rouge">ELWOOD</code></a>)</em>, Smalltalk <em>(<a href="#university-of-wisconsin"><code class="language-plaintext highlighter-rouge">WISCONSIN</code></a>, <a href="#teleplace"><code class="language-plaintext highlighter-rouge">TELEPLACE</code></a>)</em>, and NodeJS native extensions <em>(<a href="#tuneup-media"><code class="language-plaintext highlighter-rouge">TUNEUP</code></a>)</em>.</li>
+	<li><strong>Opportunistic Framework Consumer:</strong>  Express <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, Rails <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, React <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, Angular <em>(<a href="#shocase"><code class="language-plaintext highlighter-rouge">SHOCASE</code></a>)</em>, Material Design <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, Unity <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>)</em> …</li>
+	<li><strong>Adept with Wacky Tech:</strong> multi-user realtime distributed systems <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>, <a href="#teleplace"><code class="language-plaintext highlighter-rouge">TELEPLACE</code></a>, <a href="#university-of-wisconsin"><code class="language-plaintext highlighter-rouge">WISCONSIN</code></a>)</em>, VR <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, blockchain <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em>, symbolic AI <em>(<a href="#university-of-wisconsin"><code class="language-plaintext highlighter-rouge">WISCONSIN</code></a>, <a href="#icad"><code class="language-plaintext highlighter-rouge">ICAD</code></a>)</em>, low-level embedded systems <em>(<a href="#elwood"><code class="language-plaintext highlighter-rouge">ELWOOD</code></a>)</em>, and see <a href="#crypt"><code class="language-plaintext highlighter-rouge">CRYPT</code></a>, <a href="#rules"><code class="language-plaintext highlighter-rouge">RULES</code></a>, and <a href="#million"><code class="language-plaintext highlighter-rouge">MILLION</code></a></li>
+	<li><strong>Technical Manager:</strong> Proven track record in product-oriented development, technical leadership, apropos innovation, and team mentorship <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>, <a href="#shocase"><code class="language-plaintext highlighter-rouge">SHOCASE</code></a>, <a href="#hp"><code class="language-plaintext highlighter-rouge">HP</code></a>, <a href="#university-of-wisconsin"><code class="language-plaintext highlighter-rouge">WISCONSIN</code></a>, <a href="#curl"><code class="language-plaintext highlighter-rouge">CURL</code></a>, <a href="#icad"><code class="language-plaintext highlighter-rouge">ICAD</code></a>)</em>, with a high rate of re-employment among colleagues <em>(<a href="#linden-lab"><code class="language-plaintext highlighter-rouge">LINDEN</code></a>, <a href="#tuneup-media"><code class="language-plaintext highlighter-rouge">TUNEUP</code></a>, <a href="#hp"><code class="language-plaintext highlighter-rouge">HP</code></a>, <a href="#teleplace"><code class="language-plaintext highlighter-rouge">TELEPLACE</code></a>, <a href="#engineering-intent"><code class="language-plaintext highlighter-rouge">ENGINEERING INTENT</code></a>, <a href="#curl"><code class="language-plaintext highlighter-rouge">CURL</code></a>)</em>.</li>
+	<li><strong>Passionate About Results:</strong> Self-directed with extensive experience in cross functional team collaboration. On-time delivery of prototype-through-product iteration via modified Agile methodologies and test-driven development. <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>)</em></li>
+	<li><strong>Effective Communicator:</strong> Strong ability to simplify complex problems, crafting functional solutions, and collaborating with industry thought leaders. <em>(<a href="#high-fidelity"><code class="language-plaintext highlighter-rouge">HIGH FIDELITY</code></a>, <a href="#teleplace"><code class="language-plaintext highlighter-rouge">TELEPLACE</code></a>, <a href="#university-of-wisconsin"><code class="language-plaintext highlighter-rouge">WISCONSIN</code></a>, <a href="#curl"><code class="language-plaintext highlighter-rouge">CURL</code></a>, <a href="#elwood"><code class="language-plaintext highlighter-rouge">ELWOOD</code></a>)</em></li>
+      </ul>
+
+      <h2 id="open-source">Open Source</h2>
+
+      <h4 id="crypt">CRYPT: <a href="https://github.com/kilroy-code/distributed-security#distributed-security">Cryptography and Key-Management</a></h4>
+      <h4 id="rules">RULES: <a href="https://github.com/kilroy-code/rules#rules">Rule-Based Expert Systems and Symbolic AI</a></h4>
+      <h4 id="million">MILLION: <a href="https://github.com/howard-stearns/million#million-partitions">Partition a computation over a million nodes, with no back-end</a></h4>
+      <h4 id="sl">SL: <a href="https://github.com/secondlife/viewer">Second Life</a></h4>
+      <h4 id="hifi">HIFI: <a href="https://ryanschultz.com/category/high-fidelity-highlights/">High Fidelity VR</a></h4>
+      <h4 id="qwaq">QWAQ: <a href="https://github.com/itsmeront/openqwaq">Teleplace/Qwaq/Croquet</a></h4>
+      <h4 id="eclipse">ECLIPSE: <a href="https://github.com/blakemcbride/eclipse-lisp">Eclipse Common Lisp</a></h4>
+      <h4 id="github">GITHUB: <a a href="https://github.com/howard-stearns">Personal Github</a></h4>
+
+      <h2 id="publications-and-conferences">Publications and Conferences</h2>
+
+      <h3 id="programming">Programming</h3>
+
+      <h4 id="performance">PERFORMANCE</h4>
+      <p>“<a href="https://www.wetmachine.com/inventing-the-future/mostly-reliable-performance-of-software-processes-by-dynamic-control-of-quality-parameters/">Mostly Reliable Performance of Software Processes by Dynamic Control of Quality Parameters</a>”, in <a href="#wetmachine">WETMACHINE</a>: Inventing the Future, 2011.</p>
+      <h4 id="brie-arch">BRIE-ARCH</h4>
+      <p>Howard Stearns, Joshua Gargus, Martin Schuetze, and Julian Lombardi. “<a href="https://alum.mit.edu/www/stearns/croquet/C5-06-BrieArchitecture.pdf">A Language Supporting Direct Manipulation of Component-based Object Construction and Deconstruction in Collaborative Croquet Spaces</a>”, in Proc., Fourth Conference on Creating, Connecting, and Collaborating through Computing (C5 ‘06), IEEE Computer Society Press, 2006.</p>
+      <h4 id="tour">TOUR</h4>
+      <p>“<a href="https://alum.mit.edu/www/stearns/curl/curl.html">A Whirlwind Tour of Curl Technology for the Web</a>”, in Lightweight Languages Workshop CD-ROM. Dr. Dobb’s Journal workshop CD, 2002.</p>
+      <h4 id="spec">SPEC</h4>
+      <p>“Curl Language Specification.” Curl Corp. internal memo, 2001. 664 pages, including rationale, language comparisons with Java, C++ and others, and extensive cross-index.</p>
+      <h4 id="lispc">LISPC</h4>
+      <p>“<a href="https://alum.mit.edu/www/stearns/eclipse/eclipse/papers/lugm98/lisp-c.html">Lisp/C Integration in Eclipse</a>”, in Proc., 40th Anniversary of Lisp Conference, Berkeley, CA, 1998.  #### ECLIPSE-DOC
+	“Eclipse Product Documentation”, Elwood Corporation, 1997.</p>
+      <h4 id="alu">ALU</h4>
+      <p>“<a href="https://web.archive.org/web/20001211234900/http://www.alu.org/table/contents.htm">Association of Lisp Users</a>” site, circa 1996. Board member 1997-2002. Co-organizer and fixture at biennial conferences.</p>
+
+      <h3 id="technical-non-programming">Technical (non-programming)</h3>
+
+      <h4 id="ik">IK</h4>
+      <p><a href="https://www.wetmachine.com/inventing-the-future/high-fidelity-avatars-interpretive-motion-ik">Avatar Body-tracking-IK</a>, in <a href="#wetmachine">WETMACHINE</a>: Inventing the Future, 2015</p>
+      <h4 id="brie-lang">BRIE-LANG</h4>
+      <p>Howard Stearns, Joshua Gargus, Martin Schuetze, and Julian Lombardi. “<a href="https://alum.mit.edu/www/stearns/croquet/C5-06-BrieUserExperience.pdf">Simplified Distributed Authoring Via Component-based Object Construction and Deconstruction in Collaborative Croquet Spaces</a>”, in Proc., Fourth Conference on Creating, Connecting, and Collaborating through Computing (C5 ‘06), IEEE Computer Society Press, 2006.</p>
+      <h4 id="kay-2005">KAY 2005</h4>
+      <p>Rieko Kadobayashi, Julian Lombardi, Mark McCahill, Howard Stearns, Katsumi Tanaka, and Alan Kay. “<a href="https://alum.mit.edu/www/stearns/croquet/2005_Annotation_Authoring.pdf">Object and Annotation Authoring in Collaborative 3D Virtual Environments</a>”, in Proc., 15th International Conference on Artificial Reality and Telexistence (ICAT ‘05). The Virtual Reality Society of Japan, 2005.</p>
+      <h4 id="kay-2006">KAY 2006</h4>
+      <p>Rieko Kadobayashi, Julian Lombardi, Mark McCahill, Howard Stearns, Katsumi Tanaka, and Alan Kay. “<a href="https://alum.mit.edu/www/stearns/croquet/c5-06-3D-ModelAnnotation.pdf">3D Model Annotation from Multiple Viewpoints for Croquet</a>”,in Fourth Conference on Creating, Connecting, and Collaborating through Computing (C5 ‘06), IEEE Computer Society Press, 2006.</p>
+      <h4 id="ship">SHIP</h4>
+      <p>“Designing a Knowledge Based Ship Design System,” in Proc. 4th International Marine Systems Conference, Kobe, Japan, 1991</p>
+
+      <h3 id="general-audience">General Audience</h3>
+
+      <h4 id="user">USER</h4>
+      <p>High Fidelity company blog <a href="https://blog.highfidelity.com/content-discovery-part-1-whats-it-all-about-4cc67e8288a8">three</a> <a href="https://blog.highfidelity.com/content-discovery-part-2-how-f2444003f15e">part</a> <a href="https://blog.highfidelity.com/lets-all-try-to-keep-up-ece6f15f241c">series</a> on social metaverse content discovery, or on <a href="https://blog.highfidelity.com/safe-interactions-with-people-a3c65ccf5609">user safety</a>, <a href="https://blog.highfidelity.com/recording-and-livestreaming-in-vr-3cc085881f23">live-streaming</a>, 2016-2017</p>
+      <h4 id="wetmachine">WETMACHINE</h4>
+      <p>Croquet Blog <a href="https://www.wetmachine.com/category/inventing-the-future/">wetmachine: Inventing the Future</a>, including “<a href="https://www.wetmachine.com/inventing-the-future/controlling-time-intro/">Controlling Time</a>”, 2011, a seven part survey of the overall accomplishments of the Croquet Project.</p>
+      <h4 id="news">NEWS</h4>
+      <p><a href="https://alum.mit.edu/www/stearns/croquet/Croquet@UW-V1-N2.pdf">Croquet@UW Newsletter</a>. 2006.</p>
+
+      <h2 id="education">Education</h2>
+
+      <h4 id="mit">MIT</h4>
+      <p><a href="https://www.mit.edu/">Massachusetts Institute of Technology</a> - Cambridge, MA</p>
+      <ul>
+	<li>B.Sc. Ocean Engineering	1986</li>
+	<li>B.Sc. Electrical Engineering	1987</li>
+	<li>Humanities Concentration: Economics</li>
+      </ul>
+
+      <h2 id="experience">Experience</h2>
+
+      <h3 id="linden-lab"><a href="https://lindenlab.com/">Linden Lab</a></h3>
+
+      <p>Senior Developer - San Francisco, CA 2021-2024</p>
+
+      <p><a href="https://secondlife.com/">Second Life</a> is the original multi-user metaverse (50M+ users), created by Philip Rosedale in 2004. I joined when Rosedale sold the assets of High Fidelity and remaining talent to Linden. The streaming-Web prototype was solo work using pre-release tech from Amazon, and the mobile app was with a an external company. <a href="#sl">source</a></p>
+
+      <ul>
+	<li>Spearheaded development for a mobile app and a streaming-Web prototype, collaborating with external teams to enhance user engagement.</li>
+      </ul>
+
+      <h3 id="high-fidelity"><a href="https://www.highfidelity.com/">High Fidelity</a></h3>
+
+      <p>Lead Developer - San Francisco, CA 2015-2021</p>
+
+      <p>High Fidelity was Rosedale’s separate VR re-conception and ground-up re-implementation of the Second Life concept. I started as an early engineer (employee #12?), and eventually managed six senior engineer direct reports + four embedded from other teams. <a href="#hifi">source</a>, <a href="#ik">IK</a>, <a href="#user">USER</a></p>
+
+      <ul>
+	<li>Managed a team of senior engineers to optimize avatar data handling, achieving record synchronization of 600 concurrent animated avatars from one server, and 3000 users in one audio space. See <a href="https://www.youtube.com/watch?v=QhWcI1gswqs">video</a></li>
+	<li>Deployed the first NFT marketplace in the metaverse, with a blockchain payment system for user-generated content. See <a href="https://www.highfidelity.com/backlog/roadmap-protecting-intellectual-property-in-virtual-worlds-4388096d72c2">writeup</a>.</li>
+	<li>Developed and iterated on prototypes for innovative features in user safety, and content discovery, integrating UI tools and persistence models to address immediate and future scalability needs.</li>
+	<li>Owned multiple product features, defining requirements in collaboration with users and iterating over multiple deployments produced by my team. Consistently prioritized high-impact tasks that aligned with user needs.</li>
+	<li>Developed a modified Agile approach, identifying specific business outcomes for each two-week sprint, consistently delivering on-time throughout four years.</li>
+      </ul>
+
+      <h3 id="shocase">Shocase</h3>
+
+      <p>Senior Developer / Lead - San Francisco, CA 2014-2015</p>
+
+      <p>This social network for marketing professionals automatically gathered new-user portfolios from their public work. After my prototype, I put my system into production with two direct reports and three from other teams.</p>
+
+      <ul>
+	<li>Led the prototyping and production of a new-user portfolio collection mechanism, managing a cross-functional team that harvested 100+ portfolios, significantly enhancing the platform’s user engagement and the new-user experience.</li>
+      </ul>
+
+      <h3 id="tuneup-media"><a href="https://support.tuneupmedia.com/hc/en-us">TuneUp Media</a></h3>
+
+      <p>Senior Developer / Lead	- San Francisco, CA 2011-2014</p>
+
+      <p>TuneUp is an app that attaches to iTunes, and uses the GraceNote service to identify and fix missing or incorrect track metadata for 9M Mac and Windows users. The CEO had been my CEO at Teleplace.</p>
+
+      <ul>
+	<li>Collaborated closely with product management and other teams to re-architect a metadata correction system, enhancing user experience in personal music collections.</li>
+      </ul>
+
+      <h3 id="hp"><a href="https://www.hp.com/us-en/home.html">HP</a></h3>
+
+      <p>Senior Application Lead	- Sunnyvale, CA 2011</p>
+
+      <p>I joined <a href="https://en.wikipedia.org/wiki/Palm,_Inc.">Palm</a> shortly before the release of Palm’s <a href="https://en.wikipedia.org/wiki/WebOS">WebOS</a> tablet, following an engineer I had worked with at Teleplace and at the University of Wisconsin, and I brought in the product manager from Teleplace. Soon after the release, HP announced that Palm would be wound down.</p>
+
+      <ul>
+	<li>Delivered Palm’s most complex mobile app (email) and managed our first Agile and test-driven development.</li>
+	<li>Identified and developed a “missing app” (calculator) for the tablet launch, enhancing product offerings and user experience.</li>
+      </ul>
+
+      <h3 id="teleplace">Teleplace</h3>
+
+      <p>Member of the Technical Staff - Redwood City, CA 2007-2011</p>
+
+      <p>Teleplace (originally called <a href="https://www.3dicc.com/about/">Qwaq</a>) was the enterprise commercialization of the Croquet project, advised by Alan Kay. <a href="#qwaq">source</a>, <a href="#performance">PERFORMANCE</a>, <a href="#wetmachine">WETMACHINE</a></p>
+
+      <ul>
+	<li>
+	  <p>Delivered multiple diverse features in enterprise virtual worlds, including bandwidth-efficient avatar animation on 2005 hardware without a graphics card, enabling operation over edge cellular networks.</p>
+	</li>
+	<li>
+	  <p>Delivered an innovative mobile streaming app for collaborative meetings.</p>
+	</li>
+      </ul>
+
+      <h3 id="university-of-wisconsin"><a href="https://it.wisc.edu/about/division-of-information-technology/">University of Wisconsin</a></h3>
+
+      <p>Lead Developer - Madison, WI 2004-2007</p>
+
+      <p>The multi-institution Croquet Project was convened by computing pioneers Alan Kay and David Reed to advance multi-user 3D virtual worlds for real-time, persistent collaboration. I managed the UW development team (three direct reports). <a href="#brie-arch">BRIE-ARCH</a>, <a href="#brie-lang">BRIE-LANG</a>, <a href="#kay-2005">KAY 2005</a>, <a href="#kay-2006">KAY 2006</a>, <a href="#news">NEWS</a></p>
+
+      <ul>
+	<li>Drove funding by leading the team to produce the first virtual world classroom experiences, integrated with the university’s learning systems and pedagogy.</li>
+	<li>Completed a successful contract with a Japanese government agency.</li>
+	<li>Published an innovative interactive language for non-programmers using symbolic AI techniques.</li>
+      </ul>
+
+      <h3 id="engineering-intent"><a href="https://www.engineeringintent.com/">Engineering Intent</a></h3>
+
+      <p>Applications Consultant	- Waltham, MA 2003-2004</p>
+
+      <p>Engineering Intent was a Windows re-implementation of ICAD, founded by three of colleagues from ICAD.</p>
+
+      <ul>
+	<li>Delivered rule-based applications with clients on-site and in remote office, lining up customer wins in advance of acquisition by Oracle.</li>
+      </ul>
+
+      <h3 id="curl"><a href="https://www.curl.com/">Curl</a></h3>
+
+      <p>Technology Strategist - Cambridge, MA 1999-2002</p>
+
+      <p>Curl was an MIT startup created by Tim Berners-Lee that created the rich internet architecture model of Web apps - everything that became HTML5. I followed one my colleagues from Curl and brought in another, starting as an application engineer, and creating the role of Technology Strategist. <a href="#tour">TOUR</a>, <a href="#spec">SPEC</a></p>
+
+      <ul>
+	<li>Identified technical strengths and developed applications for Tim Berners-Lee’s rich internet architecture model, enhancing competitive positioning in the market.</li>
+	<li>Developed the language specification and produced an interactive architectural tour, enhancing product visibility and understanding.</li>
+	<li>Developed the “executive dashboard” app around which the company was sold.</li>
+      </ul>
+
+      <h3 id="elwood"><a href="https://www.elwood.com/">Elwood</a></h3>
+
+      <p>Technology Director	- Oak Creek, WI 1992-1999</p>
+
+      <p>Elwood is a small industrial firm with products in electronics, hydraulics, and robotics that transformed the artificial diamond market. <a href="#eclipse">source</a>, <a href="#lispc">LISPC</a>, <a href="#alu">ALU</a></p>
+
+      <ul>
+	<li>Developed low-level system software and factory automation controls, driving innovation in the artificial diamond market.</li>
+	<li>Produced all aspects of the Eclipse Common Lisp system from concept to new industrial customers for Elwood.</li>
+      </ul>
+
+      <h3 id="icad"><a href="https://en.wikipedia.org/wiki/ICAD_(software)">ICAD</a></h3>
+      <p>Manager Of Applications	- Cambridge, MA 1987-1992</p>
+
+      <p>ICAD was a rule-based expert-system startup for 3D mechanical engineering that spawned an IPO, three spin-offs and sale to Oracle. I started as travelling on-site application consultant, and filled a hole in our “whole product” offering. <a href="#ship">SHIP</a></p>
+
+      <ul>
+	<li>Prototyped and architected a smart integration between our rule-based 3D expert systems and external CAD systems, subsequently creating a team around this initiative with 13 products.</li>
+      </ul>
+            
+    </div>
+  </div> <!-- content -->
+  </div>
+
+  <!-- Floating Action Button for Mobile -->
+  <div class="fab" onclick="toggleTOC()">☰</div>
+
+  <!-- Popup Table of Contents for Mobile -->
+  <div class="popup-toc" id="popupToc">
+    <a href="#skills-summary" onclick="toggleTOC()">Skills Summary</a>
+    <a href="#open-source" onclick="toggleTOC()">Open Source</a>
+    <a href="#publications-and-conferences" onclick="toggleTOC()">Publications & Conferences</a>
+    <a href="#education" onclick="toggleTOC()">Education</a>
+    <a href="#experience" onclick="toggleTOC()">Experience</a>
+  </div>
+
+  <script>
+    function toggleTOC() {
+      var popup = document.getElementById('popupToc');
+      if (popup.style.display === "block") {
+        popup.style.display = "none";
+      } else {
+        popup.style.display = "block";
+      }
+    }
+
+    // Close the popup TOC when clicking outside of it
+    window.onclick = function(event) {
+      var popup = document.getElementById('popupToc');
+      var fab = document.querySelector('.fab');
+      if (event.target !== popup && !popup.contains(event.target) && event.target !== fab) {
+        popup.style.display = "none";
+      }
+    }
+  </script>
+
 </body>
 </html>
